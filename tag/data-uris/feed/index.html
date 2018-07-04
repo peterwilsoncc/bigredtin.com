@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?> <rss
+version="2.0"
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+><channel><title>Big Red Tin &#187; data-URIs</title> <atom:link href="/tag/data-uris/feed/" rel="self" type="application/rss+xml" /><link>http://bigredtin.com</link> <description>Thoughts about the web and business from the large pantry</description> <lastBuildDate>Thu, 30 Dec 2010 14:33:55 +0000</lastBuildDate> <language>en</language> <sy:updatePeriod>hourly</sy:updatePeriod> <sy:updateFrequency>1</sy:updateFrequency> <item><title>A half-baked (CSS) idea</title><link>/behind-the-websites/a-half-baked-css-idea/</link> <comments>/behind-the-websites/a-half-baked-css-idea/#comments</comments> <pubDate>Mon, 20 Sep 2010 19:22:46 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[CSS]]></category> <category><![CDATA[data-URIs]]></category> <category><![CDATA[JavaScript]]></category><guid
+isPermaLink="false">/?p=836</guid> <description><![CDATA[<a
+title="Spritebaker" href="http://www.spritebaker.com/">Spritebaker</a> has done the rounds a fair bit in web development circles over the past few weeks. It’s a great idea, done well. The only problem is it has the strange effect of making it seem like the page is actually taking longer to load. I take a look at a possible solution.]]></description> <content:encoded><![CDATA[<p><a
+title="Spritebaker" href="http://www.spritebaker.com/">Spritebaker</a> has been doing the rounds a fair bit in web development circles over the past few weeks, for the simple reason that it&#8217;s a great idea, done well. The best desciption comes from the site itself:</p><blockquote><p>It parses your css and returns a copy with all external media “baked” right into it as Base64 encoded datasets. The number of time consuming http-requests on your website is decreased significantly, resulting in a massive speed-boost.</p></blockquote><p>While baking images into your CSS to lower HTTP requests reduces the rendering time of your site overall, the downside is that CSS files <a
+title="block the initial rendering" href="http://code.google.com/speed/page-speed/docs/rendering.html#PutCSSInHead">block the initial rendering</a> of your site. While an unbaked site may render and be built up as external images load, a baked site will not render until both the CSS and baked images have loaded. This has the strange effect of making it seem like the page is actually taking <em>longer</em> to load.</p><p>I&#8217;ve thrown together a quick example of an <a
+title="unbaked page" href="http://code.bigredtin.com/spritebaker/unbaked.html">unbaked page</a> and its <a
+title="baked equivalent" href="http://code.bigredtin.com/spritebaker/baked.html">baked equivalent</a>. In this example, the unbaked page begins rendering earlier than its baked counterpart but finishes later.</p><p>In an attempt to kick off rendering earlier, I tried what I&#8217;ve named a half-baked idea: splitting the <em>standard</em> CSS into one file and the baked images into another. My hope was that browsers would render the standard CSS while the other was still loading. As you can see on the <a
+title="example page" href="http://code.bigredtin.com/spritebaker/halfbaked.html">example page</a>,  this failed.</p><p>With CSS only solutions delaying rendering of the page, it&#8217;s time to pull JavaScript out of our toolbox. Anyone whose read my article on <a
+title="delaying loading of print CSS" href="/behind-the-websites/delay-loading-of-print-css/">delaying loading of print CSS</a> will find the solution eerily familiar. The CSS files are still split into the standard files and the file containing the baked-in images, the one with the baked in images is wrapped in &lt;noscript&gt; tags in the HTML head.</p><pre><code>&lt;link rel="stylesheet" href="halfbaked-1.css" type="text/css" /&gt;
+&lt;noscript&gt;&lt;link rel="stylesheet" href="jshalfbaked-2.css" type="text/css" /&gt;&lt;/noscript&gt;</code></pre><p>This prevents the second/baked stylesheet from loading during the initial rendering of the page. Without this file blocking rendering, <a
+title="this version of the example" href="http://code.bigredtin.com/spritebaker/jsbaked.html">this version of the example</a> begins rendering as quickly as the first, unbaked, example.</p><p>The second/baked stylesheet needs to be added using the JavaScript below:</p><pre><code>&lt;script type="text/javascript"&gt;
+window.onload = function(){
+  var cssNode = document.createElement('link');
+  cssNode.type = 'text/css';
+  cssNode.rel = 'stylesheet';
+  cssNode.href = 'jshalfbaked-2.css';
+  cssNode.media = 'all';
+  document.getElementsByTagName("head")[0].appendChild(cssNode);
+}
+&lt;/script&gt;</code></pre><p>Using the method above for baking images into your CSS will give you the best of both worlds, your page will render quickly with a basic structure before a single HTTP request is used to load all of your images.</p><p>I used <a
+title="Web Page Test" href="http://www.webpagetest.org">Web Page Test</a> to measure the first-run load times using IE9 Beta, averaged over 10 tests. On the test pages, with only a few images, the advantage of a baked stylesheet isn&#8217;t apparent, on a site with more images it would quickly become so.</p><table><thead><tr><th>Version</th><th>Starts Render</th><th>Fully Loaded</th></tr></thead><tbody><tr><td><a
+title="Unbaked" href="http://www.webpagetest.org/result/100919_5CCK/">Unbaked</a></td><td>0.490s</td><td>1.652s</td></tr><tr><td><a
+title="Baked" href="http://www.webpagetest.org/result/100919_5CCM/">Baked</a></td><td>1.862s</td><td>1.836s</td></tr><tr><td><a
+title="Half baked" href="http://www.webpagetest.org/result/100919_5CCN/">Half baked</a></td><td>2.138s</td><td>2.114s</td></tr><tr><td><a
+title="JS baked" href="http://www.webpagetest.org/result/100919_5CCP/">JS baked</a></td><td>0.499s</td><td>1.993s</td></tr></tbody><tbody></tbody></table><p>As the <a
+title="Spritebaker Info page" href="http://www.spritebaker.com/info">Spritebaker info page</a> says, IE versions prior to IE8 don&#8217;t understand data-URIs, so you&#8217;ll need to use a generous sprinkling of conditional comments to load images the old fashioned way in these browsers.</p><p>The examples above were tested on IE9 Beta, Chrome 6.0, Safari 5.0, Opera 10.10 and Firefox 3.6.9. Individual results may vary.</p><p>We&#8217;d love to hear of your experiences with baking stylesheets, or other techniques you use to speed up apparent rendering of your page, especially if it slows the total load/rendering time.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/a-half-baked-css-idea/feed/</wfw:commentRss> <slash:comments>1</slash:comments> </item> </channel> </rss>
+<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
+
+Minified using disk
+Page Caching using disk (enhanced)
+Database Caching 20/26 queries in 0.003 seconds using apc
+Content Delivery Network via sg.assets.sgiant.com/pressgiant
+
+Served from: bigredtin.com @ 2011-01-01 18:49:44 -->

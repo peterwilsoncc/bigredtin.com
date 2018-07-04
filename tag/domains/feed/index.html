@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?> <rss
+version="2.0"
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+><channel><title>Big Red Tin &#187; domains</title> <atom:link href="/tag/domains/feed/" rel="self" type="application/rss+xml" /><link>http://bigredtin.com</link> <description>Thoughts about the web and business from the large pantry</description> <lastBuildDate>Thu, 30 Dec 2010 14:33:55 +0000</lastBuildDate> <language>en</language> <sy:updatePeriod>hourly</sy:updatePeriod> <sy:updateFrequency>1</sy:updateFrequency> <item><title>Getting the bloginfo correctly</title><link>/behind-the-websites/getting-the-bloginfo-correctly/</link> <comments>/behind-the-websites/getting-the-bloginfo-correctly/#comments</comments> <pubDate>Tue, 13 Jul 2010 02:12:30 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[bloginfo]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[domains]]></category> <category><![CDATA[plugin]]></category> <category><![CDATA[theme]]></category> <category><![CDATA[WordPress]]></category> <category><![CDATA[WordPress MS]]></category><guid
+isPermaLink="false">http://bigredtin.pressgiant.net/?p=646</guid> <description><![CDATA[One of the standout problems when using plugins with WordPress MS is when they define a constant for the plugin’s url as the script starts executing.]]></description> <content:encoded><![CDATA[<p>This site runs on an <a
+title="WordPress MS" href="http://codex.wordpress.org/Create_A_Network">WordPress </a><abbr
+title="Multi Site"><a
+title="WordPress MS" href="http://codex.wordpress.org/Create_A_Network">MS</a></abbr> install, along with a number of other small sites. You can see the full list of sites <a
+title="on the directory page" href="http://pressgiant.net/">on the directory page</a>.</p><p>As with most WordPress sites we use plugins to enhance WordPress, including <a
+title="Donncha O Caoimh" href="http://ocaoimh.ie/">Donncha O Caoimh</a>&#8216;s excellent <a
+title="WordPress MU Domain Mapping" href="http://ocaoimh.ie/wordpress-mu-domain-mapping/">WordPress <abbr>MU</abbr> Domain Mapping</a> plugin. As the name implies, the domain mapping plugin allows us to use top level domains for each site rather than being stuck with sub-domains. In the case of this blog, without the plugin it would reside at <a
+title="bigredtin.pressgiant.com" href="http://bigredtin.com">bigredtin.pressgiant.net</a>.</p><h4>Taking care with plugins</h4><p>Many plugins are tested for the single site version of WordPress only. I don&#8217;t have a problem with this as most plugins are released under the GPL and free in terms of both speech and beer. If I&#8217;m not paying for software, it&#8217;s up to me to test it in the fringe environment of WordPress <abbr
+title="Multi Site">MS</abbr>.</p><p>Now that WordPress is WordPress <abbr
+title="Multi Site">MS</abbr> is WordPress, more developers may test in both environments but they certainly can&#8217;t be expected to test with all manner of combinations of plugins.</p><h4>The standout problem</h4><p>One of the standout problems when using plugins with WordPress <abbr
+title="Multi Site">MS</abbr> is when they define a constant for the plugin&#8217;s url as the script starts executing, the PHP code may look similar to:</p><pre><code>&lt;?php
+
+  define('PLUGIN_DIR', get_bloginfo('url') . "/wp-content/plugins/peters-plugin");
+
+  function plugin_js_css(){
+    wp_enqueue_script('plugin-js', PLUGIN_DIR . '/script.js');
+    wp_enqueue_style('plugin-css', PLUGIN_DIR . '/style.css');
+  }
+
+  add_action('init', 'plugin_js_css');
+
+?&gt;</code></pre><p>The above stands equally for themes mapping the stylesheet directory at the start of execution:</p><pre><code>&lt;?php
+
+  define('THEME_DIR', get_bloginfo('stylesheet_directory') );
+
+  function theme_js_css(){
+    wp_enqueue_script('theme-js', THEME_DIR . '/script.js');
+    wp_enqueue_style('theme-css', THEME_DIR . '/style.css');
+  }
+
+  add_action('init', 'theme_js_css');
+
+?&gt;</code></pre><p>The <a
+title="get_bloginfo" href="http://codex.wordpress.org/Function_Reference/get_bloginfo"><code>get_bloginfo</code></a> and <a
+title="bloginfo" href="http://codex.wordpress.org/Function_Reference/bloginfo"><code>bloginfo</code></a> functions return information about your blog and your theme settings including the site&#8217;s home page, the theme&#8217;s directory (as in the second code sample above) or the stylesheet url. <code>bloginfo</code> outputs the requested information to your <abbr>HTML</abbr>, <code>get_bloginfo</code> returns it for use in your <abbr>PHP</abbr>.</p><p>Outside of code samples, <code>bloginfo</code> and <code>get_bloginfo</code> are interchangeable throughout this article.</p><p>The problems occur when a subsequently loaded plugin needs to change something retrieved from <code>bloginfo</code>. In this site&#8217;s case, Domain Mapping changes all URLs obtained through <code>bloginfo</code>, but it could be a plugin that simply changes the stylesheet url to a subdomain to speed up page load.</p><p>In a recent case, a plugin – let&#8217;s call it <a
+title="Disqus" href="http://disqus.com/">Disqus</a> – was defining a constant in this manner. As result an <abbr
+title="Cross-site scripting">XSS</abbr> error was occurring when attempting to use Facebook Connect. Replacing the constant with a <code>bloginfo</code> call fixed the problem.</p><p>The improved code for the first sample above is:</p><pre><code>&lt;?php
+
+  function plugin_js_css(){
+    wp_enqueue_script('plugin-js', get_bloginfo('url') . '/wp-content/plugins/peters-plugin/script.js');
+    wp_enqueue_style('plugin-css', Pget_bloginfo('url') . '/wp-content/plugins/peters-plugin/style.css');
+  }
+
+  add_action('init', 'plugin_js_css');
+
+?&gt;</code></pre><h4>bloginfo doesn&#8217;t hit the database everytime</h4><p>I presume the developers set their own constants because they&#8217;d like to avoid hitting the database repeatedly to receive the same information.</p><p>Having run some tests on my local install of WordPress, I can assure you this is not the case. Running <code>bloginfo('stylesheet_directory')</code> triggers a db call on the first occurrence, the information is then cached for subsequent calls.</p><p>I realise I sound incredibly fussy and that I&#8217;m suggesting we protect against edge cases on our edge cases. You&#8217;re right, and <a
+title="it's not the first time" href="/behind-the-websites/javascript-the-wordpress-way-part-1/">it&#8217;s not the first time</a>, but as developers it&#8217;s the edge cases that we&#8217;re employed to avoid.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/getting-the-bloginfo-correctly/feed/</wfw:commentRss> <slash:comments>0</slash:comments> </item> <item><title>Names Will Never Harm You</title><link>/business/names-will-never-harm-you/</link> <comments>/business/names-will-never-harm-you/#comments</comments> <pubDate>Tue, 27 Oct 2009 00:24:24 +0000</pubDate> <dc:creator>Josh Kinal</dc:creator> <category><![CDATA[Business]]></category> <category><![CDATA[business names]]></category> <category><![CDATA[domains]]></category> <category><![CDATA[starting-up]]></category><guid
+isPermaLink="false">http://soupgiant.com/?p=200</guid> <description><![CDATA[Once we decided to go into business together, there was one definite first thing we needed to: Come up with a name.]]></description> <content:encoded><![CDATA[<p>Soupgiant is now only about 4 weeks old. It&#8217;s a partnership and, as such, we&#8217;ve each brought existing clients to the business. We already each had a computer. We also each had goals that we wanted to achieve while in business.</p><p>Once we decided to go into business together, there was one definite first thing we needed to: Come up with a name.</p><p>We riffed back and forth with words and word combinations we liked. As soon as we had one we agreed on, we did the following:</p><p><img
+src="/files/2009/10/Getting-a-business-name.png" alt="Getting a business name.png" border="0" width="225" height="820" /></p><p>This whole process took about 20 minutes. We got it done and out of the way so we could concentrate on other things.</p><p>There are lots of different needs vying for your attention in the first few weeks of starting a business. Find a business name that doesn&#8217;t make you wince when you first hear it. Find something you can have fun or sound important with, but don&#8217;t stress about it.</p><p>The first time someone hears the name of your business, it&#8217;s not going to mean anything to them anyway. What matters is that you build a reputation on that name.</p><p>Once you have a name you can start with business cards, websites, twitter accounts, t-shirts, and letterhead. You can get a bank account, <a
+href="http://www.abr.gov.au/ABR_BC/" title="Australian Business Register">ABN, TFN, registration,</a> insurance, and <a
+href="http://www.business.gov.au/Business+Entry+Point/How-to+guides/Starting+a+business/" title="Australian Government Business Site">all those boring things you have to do</a> before you can conquer the world.</p> ]]></content:encoded> <wfw:commentRss>/business/names-will-never-harm-you/feed/</wfw:commentRss> <slash:comments>0</slash:comments> </item> </channel> </rss>
+<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
+
+Minified using disk
+Page Caching using disk (enhanced)
+Database Caching 28/32 queries in 0.004 seconds using apc
+Content Delivery Network via sg.assets.sgiant.com/pressgiant
+
+Served from: bigredtin.com @ 2011-01-01 17:34:03 -->

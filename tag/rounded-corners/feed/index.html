@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?> <rss
+version="2.0"
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+><channel><title>Big Red Tin &#187; rounded corners</title> <atom:link href="/tag/rounded-corners/feed/" rel="self" type="application/rss+xml" /><link>http://bigredtin.com</link> <description>Thoughts about the web and business from the large pantry</description> <lastBuildDate>Thu, 30 Dec 2010 14:33:55 +0000</lastBuildDate> <language>en</language> <sy:updatePeriod>hourly</sy:updatePeriod> <sy:updateFrequency>1</sy:updateFrequency> <item><title>Rounded Corners Everywhere</title><link>/behind-the-websites/rounded-corners-everywhere/</link> <comments>/behind-the-websites/rounded-corners-everywhere/#comments</comments> <pubDate>Wed, 26 May 2010 02:34:42 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[border-radius]]></category> <category><![CDATA[browser support]]></category> <category><![CDATA[CSS]]></category> <category><![CDATA[CSS3]]></category> <category><![CDATA[rgba]]></category> <category><![CDATA[rounded corners]]></category><guid
+isPermaLink="false">http://bigredtin.pressgiant.net/?p=431</guid> <description><![CDATA[Similar support of <a
+title="rgba" href="http://24ways.org/2009/working-with-rgba-colour">rgba</a> and <a
+title="border-radius" href="http://www.zenelements.com/blog/css3-border-radius-rounded-corners/">border-radius</a> in modern browsers allows us to use both the old graphical and new css3 methods for rounded corners. This gives us the same look in almost all browsers.]]></description> <content:encoded><![CDATA[<p>Spending some time looking at CSS3 support on <a
+title="Can I Use dot com" href="http://caniuse.com">caniuse.com</a>, I noticed how similar browser support for <a
+title="border-radius" href="http://www.zenelements.com/blog/css3-border-radius-rounded-corners/">border-radius</a> and <a
+title="rgba colours" href="http://24ways.org/2009/working-with-rgba-colour">rgba colours</a> is:</p><p><img
+class="alignnone size-large wp-image-432" title="RGBA support Vs border-radius support" src="/files/2010/05/rgba-vs-border-radius-635x488.jpg" alt="RGBA support Vs border-radius support" width="635" height="488" /><br
+/> – <a
+title="source" href="http://caniuse.com/#agents=All&amp;eras=All&amp;cats=CSS3&amp;statuses=rec,pr,cr,wd,ietf">source</a><br
+/> The striking similarity allows us to use both the old graphical and new css3 methods for rounded corners, giving us the same look in almost all browsers but without wasting the bandwidth of users with modern browsers.</p><p>At Big Red Tin, we&#8217;ve used this method for the top corners of the twitter bubble on the left, the relevant CSS is:</p><pre><code>.aktt_widget .aktt_tweets {
+  background: #999
+              url(10pxrounded-210w-24.png)
+              no-repeat top center;
+
+  background: rgba(153,153,153,1) none;
+
+     -moz-border-radius: 10px; /* FF1+ */
+  -webkit-border-radius: 10px; /* Saf3+, Chrome */
+          border-radius: 10px; /* Opera 10.5, IE 9 */
+}</code></pre><p>– <a
+title="source" href="http://css.assets.sgiant.com/pressgiant/wp-content/themes/bigredtin/assets/child/c/screen/screen.css">source</a> (search for .aktt_widget .aktt_tweets)</p><p>Browsers that don&#8217;t support rgba colours use the first background call which includes an image to emulate rounded corners. Browsers that do support rgba use the second background call, which includes a fully opaque colour but no background image, for the most part these browser can interpret the border-radius calls that follow.</p><p>This method falls over in Opera 10.1, which displays a square border, and will fall over in IE9, which will interpret the border-radius call <em>and</em> download the image. I don&#8217;t see these couple of exceptions as a big problem, as browser support always involves catering to the majority.</p><p>Do you exploit a similar coincidence of browser support? <a
+title="Share it in the comments" href="/behind-the-websites/rounded-corners-everywhere/#comments">Share it in the comments</a>.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/rounded-corners-everywhere/feed/</wfw:commentRss> <slash:comments>0</slash:comments> </item> </channel> </rss>
+<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
+
+Minified using disk
+Page Caching using disk (enhanced)
+Database Caching 21/26 queries in 0.003 seconds using apc
+Content Delivery Network via sg.assets.sgiant.com/pressgiant
+
+Served from: bigredtin.com @ 2011-01-01 19:14:46 -->

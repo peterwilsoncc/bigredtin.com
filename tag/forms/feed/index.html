@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?> <rss
+version="2.0"
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+><channel><title>Big Red Tin &#187; forms</title> <atom:link href="/tag/forms/feed/" rel="self" type="application/rss+xml" /><link>http://bigredtin.com</link> <description>Thoughts about the web and business from the large pantry</description> <lastBuildDate>Thu, 30 Dec 2010 14:33:55 +0000</lastBuildDate> <language>en</language> <sy:updatePeriod>hourly</sy:updatePeriod> <sy:updateFrequency>1</sy:updateFrequency> <item><title>Forms are forms, not lists</title><link>/behind-the-websites/forms-are-forms-not-lists/</link> <comments>/behind-the-websites/forms-are-forms-not-lists/#comments</comments> <pubDate>Thu, 02 Dec 2010 00:00:04 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[forms]]></category> <category><![CDATA[html]]></category> <category><![CDATA[lists]]></category> <category><![CDATA[tabels]]></category> <category><![CDATA[xhtml]]></category><guid
+isPermaLink="false">/?p=908</guid> <description><![CDATA[I have often seen HTML forms coded as part of a lists, including from some publications and people I highly respect. I believe this to be incorrect.]]></description> <content:encoded><![CDATA[<p>Respecting someone or their publication does not prevent one from disagreeing with them. In fact, I think to nod along saying &#8220;you&#8217;re so right, <em>OMG, you are so right!</em>&#8221; is less respectful than listening to and considering what they say. That dealt with, allow me to disagree with some people I respect.</p><p>Frequently, I see HTML forms coded as lists. I&#8217;ve seen this in code by some publications and people I highly respect, such as on <a
+title="A List Apart: Forward thinking form validation" href="http://www.alistapart.com/articles/forward-thinking-form-validation/">A List Apart</a>. The code may be:</p><pre><code>&lt;form action="example.php" method="post"&gt;
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;label for="itemOne"&gt;Item One&lt;/label&gt;
+    &lt;input id="itemOne" name="itemOne" /&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;label for="itemTwo"&gt;Item Two&lt;/label&gt;
+    &lt;input id="itemTwo" name="itemTwo" /&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+&lt;/form&gt;</code></pre><p><span
+id="more-908"></span></p><p>The method remains much the same if using unordered or definition lists. The argument for using this method is that forms are a list of fields. A variation is to use a table, arguing that forms are a table of labels and inputs.</p><p>I don&#8217;t believe either argument is correct, I believe forms are a series of:</p><ul><li><code>fieldset</code>s;</li><li><code>legend</code>s;</li><li><code>label</code>s;</li><li><code>button</code>s;</li><li><code>input</code>s, <code>select</code>s, <code>option</code>s, etc.</li></ul><p>All semantic meaning for forms should come from the appropriate <abbr>HTML</abbr> tags. If you want to use other elements as hooks for styling, they should be semantically meaningless <code>span</code>s and <code>div</code>s.</p><p>I consider the arguments cited above as justifications for making styling easier. Without block elements, forms <em>can</em> be difficult to style. Rather than wrapping each input pair with a list item, I wrap them with <code>div</code>s.</p><pre><code>&lt;form action="example.php" method="post"&gt;
+&lt;div&gt;
+  &lt;label for="itemOne"&gt;Item One&lt;/label&gt;
+  &lt;input id="itemOne" name="itemOne" /&gt;
+&lt;/div&gt;
+&lt;/form&gt;</code></pre><p>Wrapping each input pair in a <code>div</code> is just as lazy as wrapping each input pair in a list item. However, as <code>div</code>s are meaningless, it doesn&#8217;t require bending of semantics to justify my actions.</p><p>There is a valid argument for an element to define an input pair but I think such an element is redundant. We already have a method for defining the pairing of labels with their inputs. The &#8220;<code>for</code>&#8221; attribute within the <code>label</code> pairs with the &#8220;<code>id</code>&#8221; attribute of the associated <code>input</code>.</p><p>If you wrap your forms in a list or a table, look carefully at what you are doing. Ask yourself; is what you are doing semantically valid or are you lazily trying to make styling easier? As context for your consideration, ask yourself if a whole page of text is really just a list of paragraphs.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/forms-are-forms-not-lists/feed/</wfw:commentRss> <slash:comments>0</slash:comments> </item> </channel> </rss>
+<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
+
+Minified using disk
+Page Caching using disk (enhanced)
+Database Caching 22/26 queries in 0.003 seconds using apc
+Content Delivery Network via sg.assets.sgiant.com/pressgiant
+
+Served from: bigredtin.com @ 2011-01-01 18:28:55 -->

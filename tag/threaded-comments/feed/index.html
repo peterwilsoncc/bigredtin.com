@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?> <rss
+version="2.0"
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+><channel><title>Big Red Tin &#187; threaded comments</title> <atom:link href="/tag/threaded-comments/feed/" rel="self" type="application/rss+xml" /><link>http://bigredtin.com</link> <description>Thoughts about the web and business from the large pantry</description> <lastBuildDate>Thu, 30 Dec 2010 14:33:55 +0000</lastBuildDate> <language>en</language> <sy:updatePeriod>hourly</sy:updatePeriod> <sy:updateFrequency>1</sy:updateFrequency> <item><title>Including WordPress&#8217;s comment-reply.js (the right way)</title><link>/behind-the-websites/including-wordpress-comment-reply-js/</link> <comments>/behind-the-websites/including-wordpress-comment-reply-js/#comments</comments> <pubDate>Fri, 14 Aug 2009 03:15:41 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[comments]]></category> <category><![CDATA[JavaScript]]></category> <category><![CDATA[threaded comments]]></category> <category><![CDATA[WordPress]]></category><guid
+isPermaLink="false">http://peterwilson.cc/?p=134</guid> <description><![CDATA[Since threaded comments were enabled in Wordpress 2.7, most themes check if the visitor is browsing either a page or a post and adds the JavaScript required for threaded comments if they are.I prefer a slight variation]]></description> <content:encoded><![CDATA[<p>Since threaded comments were enabled in WordPress 2.7, most themes include the following line in header.php</p><pre><code>&lt;?php if ( is_singular() ) wp_enqueue_script( 'comment-reply' ); ?&gt;</code></pre><p>This code checks if the visitor is browsing either a page or a post and adds the JavaScript required for threaded comments if they are.</p><p>I prefer a slight variation</p><pre><code>&lt;?php
+if ( is_singular() AND comments_open() AND (get_option('thread_comments') == 1))
+  wp_enqueue_script( 'comment-reply' );
+?&gt;</code></pre><p>My variation checks if the visitor is browsing either a page or a post, if comments are open for the entry, and finally, if threaded comments are enabled. If all of these conditions are met, the JavaScript required for threaded comments is added.</p><p>If you run your wp_enqueue_script calls in functions.php, as I do, this is the code to use:</p><pre><code>&lt;?php
+function theme_queue_js(){
+  if (!is_admin()){
+    if ( is_singular() AND comments_open() AND (get_option('thread_comments') == 1))
+      wp_enqueue_script( 'comment-reply' );
+  }
+}
+add_action('wp_print_scripts', 'theme_queue_js');
+?&gt;</code></pre><p>The call is added to the wp_print_scripts action as <code>is_singular</code> and <code>comments_open</code> are unknown during the init action.</p><p><strong>Updated Aug 15 &#8217;09</strong>: Fixed two typos in the final code sample</p><p><strong>Updated Jun 13 &#8217;10</strong>: Changed action in final code block from get_header to wp_print_scripts. Either action works but wp_print_scripts has a closer relationship with the task being performed than the former.</p><p><em>Props to <a
+title="Digging Into WordPress" href="http://digwp.com">Digging Into WordPress</a> for the &#8230;the right way&#8230; terminology:)</em></p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/including-wordpress-comment-reply-js/feed/</wfw:commentRss> <slash:comments>4</slash:comments> </item> </channel> </rss>
+<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
+
+Minified using disk
+Page Caching using disk (enhanced)
+Database Caching using apc
+Content Delivery Network via sg.assets.sgiant.com/pressgiant
+
+Served from: bigredtin.com @ 2011-01-01 19:25:21 -->

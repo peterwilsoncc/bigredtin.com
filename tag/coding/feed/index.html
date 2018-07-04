@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?> <rss
+version="2.0"
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+><channel><title>Big Red Tin &#187; coding</title> <atom:link href="/tag/coding/feed/" rel="self" type="application/rss+xml" /><link>http://bigredtin.com</link> <description>Thoughts about the web and business from the large pantry</description> <lastBuildDate>Thu, 30 Dec 2010 14:33:55 +0000</lastBuildDate> <language>en</language> <sy:updatePeriod>hourly</sy:updatePeriod> <sy:updateFrequency>1</sy:updateFrequency> <item><title>A half-baked (CSS) idea</title><link>/behind-the-websites/a-half-baked-css-idea/</link> <comments>/behind-the-websites/a-half-baked-css-idea/#comments</comments> <pubDate>Mon, 20 Sep 2010 19:22:46 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[CSS]]></category> <category><![CDATA[data-URIs]]></category> <category><![CDATA[JavaScript]]></category><guid
+isPermaLink="false">/?p=836</guid> <description><![CDATA[<a
+title="Spritebaker" href="http://www.spritebaker.com/">Spritebaker</a> has done the rounds a fair bit in web development circles over the past few weeks. It’s a great idea, done well. The only problem is it has the strange effect of making it seem like the page is actually taking longer to load. I take a look at a possible solution.]]></description> <content:encoded><![CDATA[<p><a
+title="Spritebaker" href="http://www.spritebaker.com/">Spritebaker</a> has been doing the rounds a fair bit in web development circles over the past few weeks, for the simple reason that it&#8217;s a great idea, done well. The best desciption comes from the site itself:</p><blockquote><p>It parses your css and returns a copy with all external media “baked” right into it as Base64 encoded datasets. The number of time consuming http-requests on your website is decreased significantly, resulting in a massive speed-boost.</p></blockquote><p>While baking images into your CSS to lower HTTP requests reduces the rendering time of your site overall, the downside is that CSS files <a
+title="block the initial rendering" href="http://code.google.com/speed/page-speed/docs/rendering.html#PutCSSInHead">block the initial rendering</a> of your site. While an unbaked site may render and be built up as external images load, a baked site will not render until both the CSS and baked images have loaded. This has the strange effect of making it seem like the page is actually taking <em>longer</em> to load.</p><p>I&#8217;ve thrown together a quick example of an <a
+title="unbaked page" href="http://code.bigredtin.com/spritebaker/unbaked.html">unbaked page</a> and its <a
+title="baked equivalent" href="http://code.bigredtin.com/spritebaker/baked.html">baked equivalent</a>. In this example, the unbaked page begins rendering earlier than its baked counterpart but finishes later.</p><p>In an attempt to kick off rendering earlier, I tried what I&#8217;ve named a half-baked idea: splitting the <em>standard</em> CSS into one file and the baked images into another. My hope was that browsers would render the standard CSS while the other was still loading. As you can see on the <a
+title="example page" href="http://code.bigredtin.com/spritebaker/halfbaked.html">example page</a>,  this failed.</p><p>With CSS only solutions delaying rendering of the page, it&#8217;s time to pull JavaScript out of our toolbox. Anyone whose read my article on <a
+title="delaying loading of print CSS" href="/behind-the-websites/delay-loading-of-print-css/">delaying loading of print CSS</a> will find the solution eerily familiar. The CSS files are still split into the standard files and the file containing the baked-in images, the one with the baked in images is wrapped in &lt;noscript&gt; tags in the HTML head.</p><pre><code>&lt;link rel="stylesheet" href="halfbaked-1.css" type="text/css" /&gt;
+&lt;noscript&gt;&lt;link rel="stylesheet" href="jshalfbaked-2.css" type="text/css" /&gt;&lt;/noscript&gt;</code></pre><p>This prevents the second/baked stylesheet from loading during the initial rendering of the page. Without this file blocking rendering, <a
+title="this version of the example" href="http://code.bigredtin.com/spritebaker/jsbaked.html">this version of the example</a> begins rendering as quickly as the first, unbaked, example.</p><p>The second/baked stylesheet needs to be added using the JavaScript below:</p><pre><code>&lt;script type="text/javascript"&gt;
+window.onload = function(){
+  var cssNode = document.createElement('link');
+  cssNode.type = 'text/css';
+  cssNode.rel = 'stylesheet';
+  cssNode.href = 'jshalfbaked-2.css';
+  cssNode.media = 'all';
+  document.getElementsByTagName("head")[0].appendChild(cssNode);
+}
+&lt;/script&gt;</code></pre><p>Using the method above for baking images into your CSS will give you the best of both worlds, your page will render quickly with a basic structure before a single HTTP request is used to load all of your images.</p><p>I used <a
+title="Web Page Test" href="http://www.webpagetest.org">Web Page Test</a> to measure the first-run load times using IE9 Beta, averaged over 10 tests. On the test pages, with only a few images, the advantage of a baked stylesheet isn&#8217;t apparent, on a site with more images it would quickly become so.</p><table><thead><tr><th>Version</th><th>Starts Render</th><th>Fully Loaded</th></tr></thead><tbody><tr><td><a
+title="Unbaked" href="http://www.webpagetest.org/result/100919_5CCK/">Unbaked</a></td><td>0.490s</td><td>1.652s</td></tr><tr><td><a
+title="Baked" href="http://www.webpagetest.org/result/100919_5CCM/">Baked</a></td><td>1.862s</td><td>1.836s</td></tr><tr><td><a
+title="Half baked" href="http://www.webpagetest.org/result/100919_5CCN/">Half baked</a></td><td>2.138s</td><td>2.114s</td></tr><tr><td><a
+title="JS baked" href="http://www.webpagetest.org/result/100919_5CCP/">JS baked</a></td><td>0.499s</td><td>1.993s</td></tr></tbody><tbody></tbody></table><p>As the <a
+title="Spritebaker Info page" href="http://www.spritebaker.com/info">Spritebaker info page</a> says, IE versions prior to IE8 don&#8217;t understand data-URIs, so you&#8217;ll need to use a generous sprinkling of conditional comments to load images the old fashioned way in these browsers.</p><p>The examples above were tested on IE9 Beta, Chrome 6.0, Safari 5.0, Opera 10.10 and Firefox 3.6.9. Individual results may vary.</p><p>We&#8217;d love to hear of your experiences with baking stylesheets, or other techniques you use to speed up apparent rendering of your page, especially if it slows the total load/rendering time.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/a-half-baked-css-idea/feed/</wfw:commentRss> <slash:comments>1</slash:comments> </item> <item><title>JavaScript Localisation in WordPress</title><link>/behind-the-websites/javascript-localisation-in-wordpress/</link> <comments>/behind-the-websites/javascript-localisation-in-wordpress/#comments</comments> <pubDate>Wed, 01 Sep 2010 20:00:45 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[JavaScript]]></category> <category><![CDATA[themes]]></category> <category><![CDATA[WordPress]]></category> <category><![CDATA[wp_enqueue_script]]></category> <category><![CDATA[wp_localize_script]]></category><guid
+isPermaLink="false">http://bigredtin.pressgiant.net/?p=759</guid> <description><![CDATA[I was asked on Twitter recently if it's possible to pass WordPress data to JavaScript, <code>wp_localize_script()</code> is the tool to do it with.]]></description> <content:encoded><![CDATA[<p>Recently on Twitter <a
+title="@iamcracks" href="http://twitter.com/iamcracks/">@iamcracks</a> asked</p><blockquote><p>Attention WordPress Wizards &amp; Gurus. Is it possible to &#8220;get WordPress to write a custom field into a javascript variable&#8221;?</p><p>&#8211; <a
+title="source" href="http://twitter.com/iamcracks/status/22658211370">source</a></p></blockquote><p>While I wouldn&#8217;t be so bold as to claim I&#8217;m either a wizard or a guru, I happen to know the answer to @iamcracks question.</p><p>A while back I wrote a two part tutorial on using <a
+title="JavaScript the WordPress way" href="/behind-the-websites/javascript-the-wordpress-way-part-1/">JavaScript the WordPress way</a>, the code below builds on that. The first step is to load the JavaScript in functions.php using <code>wp_enqueue_script()</code> as detailed in the earlier tutorial:</p><pre><code>&lt;?php
+function brt_load_scripts() {
+  if (!is_admin()) {
+    wp_enqueue_script(
+      'brt-sample-script', //handle
+      '/path/2/script.js', //source
+      null, //no dependancies
+      '1.0.1', //version
+      true //load in html footer
+    );
+  }
+}
+
+add_action('wp_print_scripts', 'brt_load_scripts');
+?&gt;</code></pre><p>This outputs the html required for the JavaScript when <code>wp_footer()</code> is called in footer.php</p><p>Localising the script is done using the function <code>wp_localize_script()</code> it takes three variables:</p><ul><li><strong>$handle</strong> &#8211; (string) the handle defined when registering the script with wp_enqueue_script</li><li><strong>$javascriptObject</strong> &#8211; (string) name of the JavaScript object that contains the passed variables.</li><li><strong>$variables</strong> &#8211; (array) the variables to be passed</li></ul><p>To pass the site&#8217;s home page and the theme directory, we&#8217;d add this function call below the <code>wp_enqueue_script</code> call above:</p><pre><code>&lt;?php
+...
+wp_localize_script('brt-sample-script', 'brtSampleVars', array(
+  'url' =&gt; get_bloginfo('url'),
+  'theme_dir' =&gt; get_bloginfo('stylesheet_directory')
+  )
+);
+...
+?&gt;</code></pre><p>The output html would be:</p><pre><code>&lt;script type='text/javascript'&gt;
+/* &lt;![CDATA[ */
+var brtSampleVars = {
+  url: "http://bigredtin.com",
+  theme_dir: "/wp-content/themes/bigredtin"
+};
+/* ]]&gt; */
+&lt;/script&gt;
+&lt;script type='text/javascript' src='/path/2/script.js?ver=1.0.1'&gt;&lt;/script&gt;</code></pre><p>Accessing the variables within JavaScript is done using the standard dot notation, for example <code>brtSampleVars.theme_dir</code> to access the theme directory.</p><p>Using a post&#8217;s custom fields is slightly more complicated so I&#8217;ll write out the code in full:</p><pre><code>&lt;?php
+function brt_load_scripts() {
+  if (is_singular()) {
+    wp_enqueue_script(
+      'brt-sample-script', //handle
+      '/path/2/script.js', //source
+      null, //no dependancies
+      '1.0.1', //version
+      true //load in html footer
+    );
+
+    the_post();
+    $allPostMeta = get_post_custom();
+    wp_localize_script('brt-sample-script', 'brtSampleVars',
+    array(
+      'petersTwitter' =&gt; $allPostMeta['myTwitter'][0],
+      'joshsTwitter' =&gt; $allPostMeta['joshsTwitter'][0]
+      )
+    );
+    rewind_posts();
+  }
+}
+
+add_action('wp_print_scripts', 'brt_load_scripts');
+?&gt;</code></pre><p>Only pages and posts have custom fields so the check at the start of the function has become <code>is_singlular()</code> to check the user is on either a post or a page, earlier we were testing if the user was anywhere on the front end. The arguments for <code>wp_enqueue_script</code> have not changed.</p><p><code>the_post()</code> needs to be called to start the loop and initiate the $post object so the associated custom fields can be accessed in the following line and put in an array.</p><p>With the custom fields easily available, the information can then be passed to <code>wp_localize_script()</code> as earlier demonstrated. The final step is to rewind the loop so next time <code>the_post()</code> is called, from either single.php or page.php, the post data is available.</p><p>The html output from the sample above would be:</p><pre><code>&lt;script type='text/javascript'&gt;
+/* &lt;![CDATA[ */
+var brtSampleVars = {
+  petersTwitter: "@pwcc",
+  joshsTwitter: "@sealfur"
+};
+/* ]]&gt; */
+&lt;/script&gt;
+&lt;script type='text/javascript' src='/path/2/script.js?ver=1.0.1'&gt;&lt;/script&gt;</code></pre>]]></content:encoded> <wfw:commentRss>/behind-the-websites/javascript-localisation-in-wordpress/feed/</wfw:commentRss> <slash:comments>2</slash:comments> </item> <item><title>Delay loading of print CSS</title><link>/behind-the-websites/delay-loading-of-print-css/</link> <comments>/behind-the-websites/delay-loading-of-print-css/#comments</comments> <pubDate>Wed, 28 Jul 2010 05:03:50 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[CSS]]></category> <category><![CDATA[JavaScript]]></category> <category><![CDATA[WordPress]]></category><guid
+isPermaLink="false">http://bigredtin.pressgiant.net/?p=689</guid> <description><![CDATA[Recently I stumbled across an article detailing browser performance with the CSS print media type. In most recent browsers the print stylesheet held up rendering.The article suggested a solution, which I decided to automate for WordPress.]]></description> <content:encoded><![CDATA[<p>Recently I stumbled across an article on zOompf <a
+title="detailing browser performance with the CSS print media type" href="http://zoompf.com/blog/2009/12/browser-performance-problem-with-css-print-media-type">detailing browser performance with the CSS print media type</a>. In most recent browsers, Safari being the exception, the print stylesheet held up rendering of the page.</p><p>The zOomph article suggests a solution, to load print stylesheets using JavaScript once the page has  rendered (ie, on the <code>window.onload</code> event), with a backup for the JavaScript impaired. You can see their code in the original article.</p><h4>Automating the task for WordPress</h4><p>Most sites I develop are in WordPress so I decided to automate the process. This relies on using <code>wp_enqueue_style</code> to register the stylesheets:</p><pre><code>function enqueue_css(){
+  if (!is_admin()){
+    wp_enqueue_style (
+      'bigred-print', /* handle */
+      '/path-to/print.css', /* source */
+      null, /* no requirements */
+      '1.0', /* version */
+      'print' /* media type */
+    );
+  }
+}
+add_action('wp_print_styles', 'enqueue_css');</code></pre><p>The above code will output the following HTML in the header:</p><pre><code>&lt;link rel='stylesheet' id='bigred-print-css'  href='/path-to/print.css?ver=1.0' type='text/css' media='print' /&gt;</code></pre><p>The first step is to wrap the above html in noscript tags, the WordPress <a
+title="filter" href="http://codex.wordpress.org/Plugin_API#Filters">filter</a> <code>style_loader_tag</code> is ideal for this.</p><pre><code>function js_printcss($tag, $handle) {
+  global $wp_styles;
+  if ($wp_styles-&gt;registered[$handle]-&gt;args == 'print') {
+    $tag = "&lt;noscript&gt;" . $tag . "&lt;/noscript&gt;";
+  }
+  return $tag;
+}
+add_filter('style_loader_tag', 'js_printcss', 5, 2);</code></pre><p>The filter runs for all stylesheets, regardless of media type, so the function checks for print stylesheets and wraps them in the <code>noscript</code> tag, other media types are left alone.</p><p>The first two arguments are the filter and function names respectively, the third argument specifies the timing (5 is the default) and the final argument tells WordPress how many arguments to pass to the filter – two – in this case $tag and $handle.</p><p>With the new filter, WordPress now outputs following HTML in the header:</p><pre><code>&lt;noscript&gt;
+&lt;link rel='stylesheet' id='bigred-print-css'  href='/path-to/print.css?ver=1' type='text/css' media='print' /&gt;
+&lt;/noscript&gt;</code></pre><p>The next step is to add the JavaScript to load the stylesheets, we can do this by changing our original function, <code>js_printcss</code>, and making use of a global variable:</p><pre><code>$printCSS = '';
+
+function js_printcss($tag, $handle){
+  global $wp_styles, $printCSS;
+  if ($wp_styles-&gt;registered[$handle]-&gt;args == 'print') {
+
+    $tag = "&lt;noscript&gt;" . $tag . "&lt;/noscript&gt;";
+
+    preg_match("/&lt;\s*link\s+[^&gt;]*href\s*=\s*[\"']?([^\"' &gt;]+)[\"' &gt;]/", $tag, $hrefArray);
+    $href = $hrefArray[1];
+
+    $printCSS .= "var cssNode = document.createElement('link');";
+    $printCSS .= "cssNode.type = 'text/css';";
+    $printCSS .= "cssNode.rel = 'stylesheet';";
+    $printCSS .= "cssNode.href = '" . esc_js($href) . "';";
+    $printCSS .= "cssNode.media = 'print';";
+    $printCSS .= "document.getElementsByTagName(\"head\")[0].appendChild(cssNode);";
+  }
+  return $tag;
+}</code></pre><p>The code creates the PHP variable <code>$printCSS</code> globally, which is then called into the function using the global command.</p><p>After wrapping the tag in the <code>noscript</code> tags, the new function uses a regular expression to extract the URL of the stylesheet from the link tag and placing it the variable <code>$href</code>.</p><p>Having extracted the stylesheet&#8217;s URL, the function then appends the required JavaScript to the PHP global variable <code>$printCSS</code>.</p><p>The final step is to add the JavaScript to the footer of the HTML using the wp_footer action in WordPress. The PHP to do this is:</p><pre><code>function printCSS_scriptTags(){
+  global $printCSS;
+  if ($printCSS != '') {
+    echo "&lt;script type='text/javascript'&gt;\n";
+    echo "window.onload = function(){\n";
+    echo $printCSS;
+    echo "}\n&lt;/script&gt;";
+  }
+}
+
+add_action('wp_footer', 'printCSS_scriptTags');</code></pre><p>The above code uses <code>window.onload</code> as dictated in the original article. A better method would be to use an event listener to do the work, for those using jQuery we would change the function to:</p><pre><code>function printCSS_scriptTags(){
+  global $printCSS;
+  if ($printCSS != '') {
+    echo "&lt;script type='text/javascript'&gt;\n";
+    echo "jQuery(window).ready(function(){\n";
+    echo $printCSS;
+    echo "});\n&lt;/script&gt;";
+ }
+
+}
+add_action('wp_footer', 'printCSS_scriptTags');</code></pre><p>The above solution had been tested for very limited circumstances only and found to have worked. Were I to use the function in a production environment I would undertake further testing.</p><p>Another question to ask is whether all this is actually worth the effort – even when reduced through automation. On Big Red Tin, the print.css is 595 bytes, the delay in rendering is negligible.</p><p><strong>Update Aug 23, 2010</strong>: Fixed a type in the code block redefining <code>js_printcss</code>.</p><p><strong>Update Aug 27, 2010</strong>: I&#8217;ve decided to release this as a plugin, get the skinny and the plugin from the <a
+href="/behind-the-websites/delay-print-css-plugin/">followup article</a>.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/delay-loading-of-print-css/feed/</wfw:commentRss> <slash:comments>0</slash:comments> </item> <item><title>Getting the bloginfo correctly</title><link>/behind-the-websites/getting-the-bloginfo-correctly/</link> <comments>/behind-the-websites/getting-the-bloginfo-correctly/#comments</comments> <pubDate>Tue, 13 Jul 2010 02:12:30 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[bloginfo]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[domains]]></category> <category><![CDATA[plugin]]></category> <category><![CDATA[theme]]></category> <category><![CDATA[WordPress]]></category> <category><![CDATA[WordPress MS]]></category><guid
+isPermaLink="false">http://bigredtin.pressgiant.net/?p=646</guid> <description><![CDATA[One of the standout problems when using plugins with WordPress MS is when they define a constant for the plugin’s url as the script starts executing.]]></description> <content:encoded><![CDATA[<p>This site runs on an <a
+title="WordPress MS" href="http://codex.wordpress.org/Create_A_Network">WordPress </a><abbr
+title="Multi Site"><a
+title="WordPress MS" href="http://codex.wordpress.org/Create_A_Network">MS</a></abbr> install, along with a number of other small sites. You can see the full list of sites <a
+title="on the directory page" href="http://pressgiant.net/">on the directory page</a>.</p><p>As with most WordPress sites we use plugins to enhance WordPress, including <a
+title="Donncha O Caoimh" href="http://ocaoimh.ie/">Donncha O Caoimh</a>&#8216;s excellent <a
+title="WordPress MU Domain Mapping" href="http://ocaoimh.ie/wordpress-mu-domain-mapping/">WordPress <abbr>MU</abbr> Domain Mapping</a> plugin. As the name implies, the domain mapping plugin allows us to use top level domains for each site rather than being stuck with sub-domains. In the case of this blog, without the plugin it would reside at <a
+title="bigredtin.pressgiant.com" href="http://bigredtin.com">bigredtin.pressgiant.net</a>.</p><h4>Taking care with plugins</h4><p>Many plugins are tested for the single site version of WordPress only. I don&#8217;t have a problem with this as most plugins are released under the GPL and free in terms of both speech and beer. If I&#8217;m not paying for software, it&#8217;s up to me to test it in the fringe environment of WordPress <abbr
+title="Multi Site">MS</abbr>.</p><p>Now that WordPress is WordPress <abbr
+title="Multi Site">MS</abbr> is WordPress, more developers may test in both environments but they certainly can&#8217;t be expected to test with all manner of combinations of plugins.</p><h4>The standout problem</h4><p>One of the standout problems when using plugins with WordPress <abbr
+title="Multi Site">MS</abbr> is when they define a constant for the plugin&#8217;s url as the script starts executing, the PHP code may look similar to:</p><pre><code>&lt;?php
+
+  define('PLUGIN_DIR', get_bloginfo('url') . "/wp-content/plugins/peters-plugin");
+
+  function plugin_js_css(){
+    wp_enqueue_script('plugin-js', PLUGIN_DIR . '/script.js');
+    wp_enqueue_style('plugin-css', PLUGIN_DIR . '/style.css');
+  }
+
+  add_action('init', 'plugin_js_css');
+
+?&gt;</code></pre><p>The above stands equally for themes mapping the stylesheet directory at the start of execution:</p><pre><code>&lt;?php
+
+  define('THEME_DIR', get_bloginfo('stylesheet_directory') );
+
+  function theme_js_css(){
+    wp_enqueue_script('theme-js', THEME_DIR . '/script.js');
+    wp_enqueue_style('theme-css', THEME_DIR . '/style.css');
+  }
+
+  add_action('init', 'theme_js_css');
+
+?&gt;</code></pre><p>The <a
+title="get_bloginfo" href="http://codex.wordpress.org/Function_Reference/get_bloginfo"><code>get_bloginfo</code></a> and <a
+title="bloginfo" href="http://codex.wordpress.org/Function_Reference/bloginfo"><code>bloginfo</code></a> functions return information about your blog and your theme settings including the site&#8217;s home page, the theme&#8217;s directory (as in the second code sample above) or the stylesheet url. <code>bloginfo</code> outputs the requested information to your <abbr>HTML</abbr>, <code>get_bloginfo</code> returns it for use in your <abbr>PHP</abbr>.</p><p>Outside of code samples, <code>bloginfo</code> and <code>get_bloginfo</code> are interchangeable throughout this article.</p><p>The problems occur when a subsequently loaded plugin needs to change something retrieved from <code>bloginfo</code>. In this site&#8217;s case, Domain Mapping changes all URLs obtained through <code>bloginfo</code>, but it could be a plugin that simply changes the stylesheet url to a subdomain to speed up page load.</p><p>In a recent case, a plugin – let&#8217;s call it <a
+title="Disqus" href="http://disqus.com/">Disqus</a> – was defining a constant in this manner. As result an <abbr
+title="Cross-site scripting">XSS</abbr> error was occurring when attempting to use Facebook Connect. Replacing the constant with a <code>bloginfo</code> call fixed the problem.</p><p>The improved code for the first sample above is:</p><pre><code>&lt;?php
+
+  function plugin_js_css(){
+    wp_enqueue_script('plugin-js', get_bloginfo('url') . '/wp-content/plugins/peters-plugin/script.js');
+    wp_enqueue_style('plugin-css', Pget_bloginfo('url') . '/wp-content/plugins/peters-plugin/style.css');
+  }
+
+  add_action('init', 'plugin_js_css');
+
+?&gt;</code></pre><h4>bloginfo doesn&#8217;t hit the database everytime</h4><p>I presume the developers set their own constants because they&#8217;d like to avoid hitting the database repeatedly to receive the same information.</p><p>Having run some tests on my local install of WordPress, I can assure you this is not the case. Running <code>bloginfo('stylesheet_directory')</code> triggers a db call on the first occurrence, the information is then cached for subsequent calls.</p><p>I realise I sound incredibly fussy and that I&#8217;m suggesting we protect against edge cases on our edge cases. You&#8217;re right, and <a
+title="it's not the first time" href="/behind-the-websites/javascript-the-wordpress-way-part-1/">it&#8217;s not the first time</a>, but as developers it&#8217;s the edge cases that we&#8217;re employed to avoid.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/getting-the-bloginfo-correctly/feed/</wfw:commentRss> <slash:comments>0</slash:comments> </item> <item><title>&#8216;Skip to Content&#8217; Links</title><link>/behind-the-websites/skip-to-content-links/</link> <comments>/behind-the-websites/skip-to-content-links/#comments</comments> <pubDate>Thu, 08 Jul 2010 02:03:45 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[accessibility]]></category> <category><![CDATA[Best Practice]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[content]]></category> <category><![CDATA[JAWS]]></category> <category><![CDATA[screen readers]]></category> <category><![CDATA[WordPress]]></category><guid
+isPermaLink="false">http://bigredtin.pressgiant.net/?p=635</guid> <description><![CDATA[Josh and I were discussing the positioning of Skip to Content links on a website. In the past I've placed these in the first menu on the page, usually positioned under the header.]]></description> <content:encoded><![CDATA[<p>Big Red Tin co-author, Josh, and I were discussing the positioning of <em>Skip to Content</em> links on a website. In the past I&#8217;ve placed these in the first menu on the page, usually positioned under the header.</p><p>According to the <a
+title="fangs plugin for firefox" href="http://www.standards-schmandards.com/projects/fangs/">fangs plugin</a>, the <a
+title="JAWS" href="http://www.freedomscientific.com/products/fs/jaws-product-page.asp">JAWS</a> screen reader reads the opening of <a
+title="Soupgiant.com" href="http://soupgiant.com/">Soupgiant.com</a> as:</p><blockquote><p>Page has seven  headings and forty-three  links Soupgiant   vertical bar  Web Production  dash  Internet Explorer Heading level one Link Graphic Soupgiant   vertical bar  Web Production Heading level five Heat and Serve Combine  seventeen  years of web production experience, twenty  years of  television  and  radio experience,  put it all in a very large pot on a  gentle heat.  Stir regularly  and  serve. Soupgiant goes well with croutons  and  a  touch of parsley.List of five  items bullet <strong>This page link  Skip to Content</strong> bullet Link Home bullet Link About bullet Link Contact bullet Link Folio</p><p>- my emphasis</p></blockquote><p>That&#8217;s a lot of content to get through, on every page of the site, before the Skip to Content link. It would be much better if the skip to content link were earlier on the site.</p><p>As the <abbr>HTML</abbr> title of the page is read out by JAWS, the best position would be before the in-page title. The opening content would then read as:</p><blockquote><p>Page has seven  headings and forty-three  links Soupgiant   vertical bar  Web Production  dash  Internet Explorer <strong>This page link Skip to Content</strong> Heading level one Link Graphic Soupgiant   vertical bar  Web Production</p><p>- again, the emphasis is mine</p></blockquote><p>That gives the JAWS user the title of the page and immediately allows them to skip to the page&#8217;s content. I don&#8217;t read the header of on every page of a site, nor should I expect screen reader users to.</p><p>I realise screen readers most likely have a feature to skip around the page relatively easily, regardless of how the page is set up but our aim should not be <em>relative</em> ease, our aim should be <em>absolute</em> ease.</p><p>As a result, we&#8217;ve decided to move the skip to content links on future sites to earlier in the page.</p><p>Sadly, this revelation came up as a result of what I consider to be a limitation of the WordPress 3.0+ function <code><a
+title="wp_nav_menu" href="http://codex.wordpress.org/Function_Reference/wp_nav_menu">wp_nav_menu</a></code>, the inability to add items at the start of the menu. I should have considered the accessibility implications much earlier. It serves as a reminder, to all web developers, that we should constantly review our practices and past decisions.</p><p>If you&#8217;ve recently changed something you&#8217;ve always done, <a
+title="we'd love to hear about it in the comments" href="/behind-the-websites/skip-to-content-links/#comments">we&#8217;d love to hear about it in the comments</a>.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/skip-to-content-links/feed/</wfw:commentRss> <slash:comments>0</slash:comments> </item> <item><title>JavaScript the WordPress Way / Part 2</title><link>/behind-the-websites/javascript-the-wordpress-way-part-2/</link> <comments>/behind-the-websites/javascript-the-wordpress-way-part-2/#comments</comments> <pubDate>Fri, 04 Jun 2010 00:00:20 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[CSS]]></category> <category><![CDATA[JavaScript]]></category> <category><![CDATA[plugin]]></category> <category><![CDATA[theme]]></category> <category><![CDATA[WordPress]]></category> <category><![CDATA[wp_enqueue_script]]></category> <category><![CDATA[wp_enqueue_style]]></category> <category><![CDATA[wp_register_script]]></category> <category><![CDATA[wp_register_style]]></category><guid
+isPermaLink="false">http://bigredtin.pressgiant.net/?p=499</guid> <description><![CDATA[In Part 1 we introduced the <code>wp_register_script</code> and <code>wp_enqueue_script</code> functions developed to avoid JavaScript conflicts.In this section we’ll deal with a more complicated example. We’ll also take what we’ve learnt about including JavaScript and apply it to our CSS.]]></description> <content:encoded><![CDATA[<p>In <a
+title="Part 1" href="/behind-the-websites/javascript-the-wordpress-way-part-1/">Part 1</a> we discussed the conflicts that can occur on a WordPress site if themes and plugins add JavaScript using &lt;script&gt; tags. We introduced the <code>wp_register_script</code> and <code>wp_enqueue_script</code> functions developed to avoid these conflicts.</p><p>In this section we&#8217;ll deal with a <a
+title="more complicated example" href="#jswp2complicated">more complicated example</a> and <a
+title="use Google's AJAX libraries API" href="#jswp2googleapi">use Google&#8217;s AJAX libraries API</a> to lower your bandwidth costs. We&#8217;ll also take what we&#8217;ve learnt about including JavaScript and <a
+title="apply it to our CSS" href="#jswpcss">apply it to our CSS</a>.<span
+id="more-499"></span></p><h4 id="jswp2complicated">A more complicated example</h4><p>The <a
+title="sample code yesterday" href="/behind-the-websites/javascript-the-wordpress-way-part-1/#jswpregister">sample code yesterday</a> included a simple example of using the same JavaScript file throughout your site. Let&#8217;s spice things up slightly by introducing the following circumstance. Consider that you have three JavaScript files:</p><ul><li><strong>base.js</strong> is the base JavaScript file to be used throughout the site. It uses the jQuery library and must load in the HTML &lt;head&gt;;</li><li><strong>posts.js</strong> loads on pages and posts and only calls functions from the base JavaScript file but doesn&#8217;t use the jQuery library directly. It can load in the HTML footer.</li><li><strong>archives.js</strong> loads on all other pages throughout your site (except admin). It calls functions from your base JavaScript file and makes direct use of the jQuery library. It can load in the HTML footer.</li></ul><p>In this situation, you could change your base.js to use another library – say, Prototype – and it would have no effect on the posts.js. So, posts.js can be said not to depend on jQuery directly.</p><p>Changing libraries would require edits to the third file, in which case archives.js does depend on jQuery directly.</p><h5>Registering the Files</h5><p>The code to register those JavaScript files and conditions with WordPress is:</p><pre><code>wp_register_script (
+  'mytheme-base', /* handle */
+  get_bloginfo('template_url') . '/base.js', /* source */
+  array('jquery'), /* requires jQuery */
+  1.0 /* version 1.0 */
+);
+
+wp_register_script (
+  'mytheme-posts', /* handle */
+  get_bloginfo('template_url') . '/posts.js', /* source */
+  array('mytheme-base'), /* requires base.js */
+  1.0, /* version 1.0 */
+  true /* load in footer */
+);
+
+wp_register_script (
+  'mytheme-archives', /* handle */
+  get_bloginfo('template_url') . '/archives.js', /* source */
+  array('jquery', 'mytheme-base'), /* requires jQuery &amp; base.js */
+  1.0, /* version 1.0 */
+  true /* load in footer */
+);</code></pre><p>This code says to WordPress:</p><ul><li> If loading posts.js, also load base.js;</li><li> If loading archives.js, also load jQuery and base.js;</li><li> If loading base.js, also load jQuery;</li></ul><p>Each of these are separate checks (if) rather than a series of options (if, else if).</p><h5>Enqueueing the files</h5><p>All the hard work has been done registering the files, WordPress knows what each file requires to work and where in the HTML (&lt;head&gt; or footer) the &lt;script&gt; tags should be inserted.</p><p>Now it&#8217;s a simple process of checking if the visitor is loading a post or page and requesting the appropriate file.</p><p>We need to delay the check slightly, otherwise WordPress won&#8217;t know if the user is on a page, post or elsewhere. The first step is to enclose the check in a function.</p><pre><code>function que_scripts(){
+  if (!is_admin()) { //visitors only
+    if (is_singular()) { // pages &amp; posts
+      wp_enqueue_script('mytheme-posts');
+    }
+    else {
+      wp_enqueue_script('mytheme-archives');
+    }
+  }
+}</code></pre><p>Then tell WordPress when to execute the function. For this we use the <a
+title="action" href="http://codex.wordpress.org/Plugin_API#Hooks.2C_Actions_and_Filters">action</a> wp_print_scripts. This runs the code above before WordPress attempts to output the <code>&lt;script&gt;</code> tags to your HTML.</p><pre><code>add_action('wp_print_scripts', 'que_scripts')</code></pre><p>There is no need to enqueue jQuery or base.js directly. WordPress knows to add those to the HTML based on the dependancies listed when registering the files.</p><h4 id="jswp2googleapi">Using the Google AJAX Libraries API</h4><p>Loading all these libraries from your own server may seem like a waste of your bandwidth considering you could be loading the libraries directly from Google&#8217;s servers.</p><p>With a bit of luck, your visitor will have Google&#8217;s version of the libraries in their browser&#8217;s cache already and <a
+title="your site will load a little quicker" href="/behind-the-scenes/caching-on-the-google-ajax-libraries-api/">your site will load a little quicker</a>.</p><p>It&#8217;s a bit messy to do this yourself, especially since jQuery needs to be kept in noConflict mode. Fortunately <a
+title="Jason Penny" href="http://jasonpenney.net/">Jason Penny</a> has developed a plugin, called “<a
+title="Use Google Libraries" href="http://wordpress.org/extend/plugins/use-google-libraries/">Use Google Libraries</a>”, to do the hard work for you.</p><p>“Use Google Libraries” is the first plugin I add when setting up sites for me and my clients.</p><h4 id="jswp2superfab">Making our super-broken example super-fabulous</h4><p>If, when developing their theme and plugin, George and Richard <a
+title="from our example in Part 1" href="/behind-the-websites/javascript-the-wordpress-way-part-1/#jswpproblem">from our  example in Part 1</a>, had used the <code>wp_register_script</code> and <code>wp_enqueue_script</code> WordPress functions to load their JavaScript, WordPress would know that only one version of jQuery needs to be loaded for both the theme and the plugin to work.</p><p>As WordPress releases come in fits and bursts, sometimes the version of the JS libraries included with WordPress fall behind the current version of the library available otherwise.</p><p>This is a small price to pay for the knowledge that our sites will remain super-fabulous rather than super-broken, at least when it comes to the JavaScript.</p><h4 id="jswpcss">A bonus for CSS</h4><p>By now the reasons for using <code>wp_register_script</code> and <code>wp_enqueue_script</code> should be clear. If you want to go that one step further, you can use the equivalent functions for your CSS.</p><p>As CSS should always be loaded in the HTML &lt;head&gt;, there is no option to load the CSS files in the footer of the HTML. Otherwise the CSS functions take the same arguments as their JavaScript equivalents. The CSS functions are:</p><ul><li>wp_register_style</li><li>wp_enqueue_style</li></ul><p>The four parameters they take are:</p><dl><dt>$handle</dt><dd>(required for both functions) Name of the style sheet</dd><dt>$source</dt><dd>(required for <code>wp_register_style</code>) – URL of the script. Also required by <code>wp_enqueue_style</code> if the style is unregistered.</dd><dt>$dependancies</dt><dd>(optional) – an array of handles the style sheet depends on</dd><dt>$version</dt><dd>(optional) – version number</dd></dl><p>WordPress doesn&#8217;t include any style sheets bases, such as YUI CSS, in the default distribution, so the main purpose of the CSS functions is to allow you to keep track of your version numbers and to call in style sheets only as they&#8217;re needed.</p><h4>Conditional comments</h4><p>Unfortunately the WordPress functions for JavaScript do not allow for conditional comments, so scripts targeting older versions of IE (okay, I&#8217;m referring to PNG fixers for IE6) need to be coded directly into your theme&#8217;s header.php or footer.php.</p><p>On the other hand, the CSS functions do allow for conditional comments, in a round-about fashion. Let&#8217;s register a CSS file we&#8217;ll be targeting at IE6.</p><pre><code>wp_register_style (
+  'mytheme-ie6', /* handle */
+  get_bloginfo('template_url') . '/ie6.css', /* source */
+  array('mytheme-css'), /* requires mytheme-css (not shown) */
+  1.0 /* version 1.0 */
+);</code></pre><p>Behind the scenes WordPress is adding the stylesheet to the object $wp_styles. To add the conditional comments you need to access the object more directly. To target the above to IE6, the command is:</p><pre><code>$wp_styles-&gt;registered['mytheme-ie6']-&gt;extra['conditional'] = 'IE 6';</code></pre><p>If, as in the complicated example above, you need to check where a user is before enqueueing your stylesheet, again you need to enclose the enqueueing command in a function and run it on an action, in this case the action <code>wp_print_styles</code>.</p><p>For example, to output the IE6 stylesheet above on pages and posts only, the full code would be:</p><pre><code>function que_styles(){
+  if (!is_admin()) { //visitors only
+    if (is_singluar() {
+      wp_enqueue_style('mytheme-ie6');
+    }
+  }
+}
+
+add_action('wp_print_styles', 'que_styles')</code></pre><h4>Conclusion</h4><p>The methods described in this tutorial may appear to complicate matters for little pay off, especially if you&#8217;re developing a theme or plugin for your own site.</p><p>Replacing your &lt;script&gt; tags with the code above, it is true, will have almost no effect on the HTML or JavaScript output by WordPress. What&#8217;s worse, if you use the $ alias for jQuery in your JavaScript, you&#8217;ll need to edit both the theme&#8217;s php and JavaScript files.</p><p>These functions, <code>wp_register_script</code> and <code>wp_enqueue_script</code>, aren&#8217;t about now, however, they&#8217;re about “then”.</p><ul><li>Then&#8230; I activated this plugin and my JavaScript stopped working.</li><li>Then&#8230; I changed the theme and my favourite plugin stopped working</li><li>Then&#8230; I looked at the source code, and two copies of jQuery were being sent to every visitor</li></ul><p>The WordPress developers have seen the problems JavaScript conflicts can cause, and developed these functions to make your theme or plugin more robust. It&#8217;s the added robustness, for such little effort, that make these functions worth using.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/javascript-the-wordpress-way-part-2/feed/</wfw:commentRss> <slash:comments>0</slash:comments> </item> <item><title>JavaScript the WordPress Way / Part 1</title><link>/behind-the-websites/javascript-the-wordpress-way-part-1/</link> <comments>/behind-the-websites/javascript-the-wordpress-way-part-1/#comments</comments> <pubDate>Thu, 03 Jun 2010 05:44:42 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[JavaScript]]></category> <category><![CDATA[plugin]]></category> <category><![CDATA[theme]]></category> <category><![CDATA[WordPress]]></category> <category><![CDATA[wp_enqueue_script]]></category> <category><![CDATA[wp_register_script]]></category><guid
+isPermaLink="false">http://bigredtin.pressgiant.net/?p=488</guid> <description><![CDATA[Problems arise when your theme or plugin both use the same JavaScript library or if Prototype and jQuery are both used on the same site.Two of the most important WordPress functions are often ignored by WordPress theme and plugin developers. Introducing: <code>wp_register_script</code> and <code>wp_enqueue_script</code>.]]></description> <content:encoded><![CDATA[<p>Two of the most important WordPress functions are often ignored by WordPress theme and plugin developers. This is the fault of the functions themselves, they need to improve their PR and hire better publicists.</p><p>It&#8217;s also possible your theme or plugin will work perfectly well without these functions on its own. Problems <em>will</em> arise when your theme or plugin both use the same JavaScript library or if Prototype and jQuery are both used on the same site.</p><p>These functions are used to add JavaScript to the html, either in the head or the footer.</p><p>Introducing <code>wp_register_script</code> and <code>wp_enqueue_script</code><span
+id="more-488"></span></p><p>For the rest of this article I&#8217;ll refer to development of <em>your theme</em>. The tutorial applies equally to development of <em>your plugin</em>, but there&#8217;s only so many times the phrase “your theme or plugin” can appear in a page.</p><p>In this first part, we&#8217;ll look at:</p><ul><li>Defining <a
+title="the problem" href="#jswpproblem">the problem</a>;</li><li>The <a
+title="libraries included" href="#jswplibraries">libraries included</a> with WordPress;</li><li>Defining <a
+title="the functions" href="#jswpfunctions">the functions</a> we&#8217;ll be using and;</li><li>The functions for <a
+title="registering" href="#jswpregister">registering</a> and <a
+title="enqueueing" href="#jsenqueue">enqueueing</a> your scripts.</li></ul><h4 id="jswpproblem">The problem defined</h4><p>Imagine you&#8217;ve used a theme on your WordPress site for months or years without a problem. It uses jQuery to add AJAX functionality to your site and it&#8217;s called <em>George&#8217;s Super Theme</em>.</p><p>You decide to add a plugin to your WordPress site and add more AJAXy goodness to your site. This plugin also uses jQuery for the JavaScript and it&#8217;s called <em>Richard&#8217;s Fabulous Plugin</em>.</p><p>You activate the plugin and instead of the super-fabulous result you were looking for you end up with a super-broken site. None of the JavaScript is working and your visitors are stuck on the home page, with nowhere to go.</p><p>Looking at the HTML of your WordPress site, you see the following lines:</p><pre><code>&lt;script type='text/javascript'
+  src='http://sg.assets.sgiant.com/pressgiant/wp-content/themes/george/jquery-1.4.2.js'&gt;&lt;/script&gt;
+&lt;script type='text/javascript'
+  src='/wp-content/plugins/richard/jquery-1.3.2.js'&gt;&lt;/script&gt;</code></pre><p>Both the theme and the plugin are attempting to load the jQuery library. each uses a different version, which further complicates matters.</p><p>In this particular case, the theme is expecting jQuery version 1.4.2 and the plugin is replacing it with version 1.3.2. Anytime the theme attempts to use a function added to jQuery in version 1.4 or later, an error occurs preventing the JavaScript from running.</p><p>Even if the site was running as expected, it&#8217;s a waste of your users&#8217; bandwidth.</p><p>Fortunately the WordPress developers envisioned this problem and sort to solve it by including the most common JavaScript libraries with WordPress and developing the functions that are the subject of this tutorial.</p><h4 id="jswplibraries">Libraries included with WordPress</h4><p>WordPress comes with a number of JavaScript libraries pre-registered, so you need not include these libraries in your theme. All you need to do is include them as dependencies of your custom JavaScript and WordPress will do the work.</p><p>Some of the libraries included with WordPress are:</p><ul><li>jQuery – with the handle &#8216;jquery&#8217;, runs in <a
+title="no conflict mode" href="http://api.jquery.com/jQuery.noConflict/">no conflict mode</a><ul><li>WP 2.9.2 includes version 1.3.2 of jQuery</li><li>WP 3.0 will include version 1.4.2 of jQuery</li></ul></li><li>Scriptaculous – with the handle &#8216;scriptaculous&#8217;</li><li>SWFObject – with the handle &#8216;swfobject&#8217;</li><li>Prototype – with the handle &#8216;prototype&#8217;</li><li>A full list of pre-registered script can be found in the <a
+title="codex" href="http://codex.wordpress.org/Function_Reference/wp_enqueue_script#Default_scripts_included_with_WordPress">codex</a>.</li></ul><h4 id="jswpfunctions">The functions defined</h4><p>The <a
+title="WordPress codex defines wp_enqueue_script" href="http://codex.wordpress.org/Function_Reference/wp_enqueue_script">WordPress codex defines <code>wp_enqueue_script</code></a> as “a safe way of adding JavaScripts (sic) to a WordPress generated page”.</p><p><code>wp_register_script</code> is similar and can be thought of as a safe way of introducing JavaScript to WordPress, without adding it to the generated page.</p><p>The difference between these functions are fully explained in the sections <a
+title="Registering your scripts" href="#jswpregister"><em>Registering your scripts</em></a> and <em><a
+title="Enqueueing your scripts" href="#jsenqueue">Enqueueing your scripts</a></em> below.</p><p>Both functions take the same five parameters:</p><dl><dt>$handle</dt><dd>(required for both functions) Name of the script</dd><dt>$source</dt><dd>(required for <code>wp_register_script</code>) – URL of the script. Also required by <code>wp_enqueue_script</code> if the script is unregistered.</dd><dt>$dependancies</dt><dd>(optional) – an array of handles the script depends on</dd><dt>$version</dt><dd>(optional) – version number</dd><dt>$in_footer</dt><dd>(true/false, optional) – if true, place script above the HTML &lt;/body&gt; tag, otherwise place the script in the HTML &lt;head&gt;</dd></dl><p>These functions only work as expected if both <code>wp_head()</code> and <code>wp_footer()</code> are included in header.php and footer.php respectively.</p><h4 id="jswpregister">Registering your scripts – <code>wp_register_script</code></h4><p><code>wp_register_script</code> gives WordPress knowledge of your script without adding it to your HTML. <strong>Used by itself, it has no effect on your HTML whatsoever</strong>.</p><p>You can use it if you wish to register your various JavaScript files in one block of php within your theme&#8217;s functions.php file, allowing you to update version numbers, dependancies and handles in one place.</p><p>If the use of the JavaScript depends on particular conditions being met, such as the user being on a particular post, you can then enqueue your scripts elsewhere without losing track of where you should update version numbers.</p><p>If your theme&#8217;s JavaScript can be loaded in the footer and relies on the jQuery library, you would register your script with the following code:</p><pre><code>wp_register_script (
+  'mytheme-custom', /* handle WP will know JS by */
+  get_bloginfo('template_url') . '/custom.js', /* source */
+  array('jquery'), /* requires jQuery */
+  1.0, /* version 1.0 */
+  true /* can load in footer */
+);</code></pre><p>At this stage, this has no effect on your HTML, you need to use <code>wp_enqueue_script</code> to do that.</p><h4 id="jsenqueue">Enqueueing your scripts – <code>wp_enqueue_script</code></h4><p><code>wp_enqueue_script</code> outputs your JavaScript to the HTML of the page, either as a result of the w<code>p_head()</code> or the <code>wp_footer()</code> call in your PHP. If you have pre-registered your script (as above), the full code is:</p><pre><code>if (!is_admin()) {
+  wp_enqueue_script('mytheme-custom');
+}</code></pre><p>Combined with the code above, this line of code will load both jQuery and your theme&#8217;s JavaScript. The only reference to jQuery is needed in the dependancies. There is no need to register or enqueue it yourself.</p><p>The check that your visitor is outside of the admin area, <code>!is_admin()</code> – is important, as these functions can be used to add JavaScript to both the visitor and admin areas.</p><p>More often than not, you&#8217;ll want to leave the admin area alone.</p><h5>A shortcut</h5><p>It&#8217;s possible to enqueue your script without registering it first. This comes in handy if your theme uses a single JavaScript that is loaded on every page, outside the admin area, of your blog.</p><p>The code to do this is:</p><pre><code>if (!is_admin()) {
+  wp_enqueue_script (
+    'mytheme-custom', /* handle WP will know JS by */
+    get_bloginfo('template_url') . '/custom.js', /* source */
+    array('jquery'), /* requires jQuery */
+    1.0, /* version 1.0 */
+    true /* can load in footer */
+  );
+}</code></pre><p>Again, our custom code requires the jQuery Library.</p><h4>Aside: noConflict for jQuery and Prototype</h4><p>As mentioned earlier, jQuery runs in <a
+title="noConflict mode" href="http://api.jquery.com/jQuery.noConflict/">noConflict mode</a>. The reason being that in jQuery&#8217;s standard mode it includes the <code>$</code> variable as an alias. WordPress also includes Prototype, which includes the JavaScript variable <code>$</code>.</p><p>Imagine if your theme uses jQuery and you add a WordPress plugin that makes use of Prototype, whichever is loaded second would override the <code>$</code> variable of the former. Either your theme&#8217;s or the WordPress plugin&#8217;s JavaScript would crash as a result.</p><p>If your theme uses jQuery and you&#8217;d still like to make use of the <code>$</code> alias, it&#8217;s possible to do so without breaking the plugin&#8217;s JavaScript. In your JavaScript file, just wrap your code between these two lines:</p><pre><code>(function($) {
+  /* your code */
+})(jQuery);</code></pre><p>– <a
+title="source" href="http://codex.wordpress.org/Function_Reference/wp_enqueue_script#jQuery_noConflict_wrappers">source</a></p><p>Under no circumstances should you reintroduce the <code>$</code> alias for jQuery, it could lead to problems down the track.</p><p>A shorter aside: throughout this post I&#8217;m using the example of JavaScript requiring jQuery. The reasons are two-fold: a) it&#8217;s the library we use at <a
+title="Soupgiant" href="http://soupgiant.com">Soupgiant</a> and <a
+href="http://bigredtin.com">Big Red Tin</a> and, b) as Twitter&#8217;s Dustin Diaz said recently of jQuery: &#8216;<a
+title="they won" href="http://boagworld.com/technology/dustin-diaz">they won</a>&#8216;.</p><h4>Now Available: <a
+href="/behind-the-websites/javascript-the-wordpress-way-part-2/" title="Part Two">Part Two</a></h4><p>In part 2 of this tutorial we&#8217;ll <a
+href="/behind-the-websites/javascript-the-wordpress-way-part-2/#jswp2complicated">further illustrate dependancies</a>, <a
+href="/behind-the-websites/javascript-the-wordpress-way-part-2/#jswp2googleapi" title="lower your bandwidth costs">lower your bandwidth costs</a> and show you how to use <a
+href="/behind-the-websites/javascript-the-wordpress-way-part-2/#jswpcss" title="similar functions to load your stylesheets">similar functions to load your stylesheets</a>.</p> ]]></content:encoded> <wfw:commentRss>/behind-the-websites/javascript-the-wordpress-way-part-1/feed/</wfw:commentRss> <slash:comments>0</slash:comments> </item> </channel> </rss>
+<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
+
+Minified using disk
+Page Caching using disk (enhanced)
+Database Caching using apc
+Content Delivery Network via sg.assets.sgiant.com/pressgiant
+
+Served from: bigredtin.com @ 2011-01-01 17:32:45 -->

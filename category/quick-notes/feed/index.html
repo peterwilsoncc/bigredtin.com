@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Big Red Tin &#187; Quick Notes</title>
+	<atom:link href="/category/quick-notes/feed/" rel="self" type="application/rss+xml" />
+	<link>http://bigredtin.com</link>
+	<description>Thoughts about the web and business from the large pantry</description>
+	<lastBuildDate>Wed, 08 Feb 2012 06:55:38 +0000</lastBuildDate>
+	<language>en-US</language>
+		<sy:updatePeriod>hourly</sy:updatePeriod>
+		<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>http://wordpress.org/?v=3.7.1</generator>
+	<item>
+		<title>Faux Columns Revistited</title>
+		<link>/2011/css3-faux-columns/</link>
+		<comments>/2011/css3-faux-columns/#comments</comments>
+		<pubDate>Sat, 15 Oct 2011 07:10:25 +0000</pubDate>
+		<dc:creator><![CDATA[Peter Wilson]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+		<category><![CDATA[CSS]]></category>
+		<category><![CDATA[CSS3]]></category>
+
+		<guid isPermaLink="false">/?p=1302</guid>
+		<description><![CDATA[It's time to update Dan Cederholm’s faux columns to take advantage of CSS3 gradients and reduce http requests.]]></description>
+				<content:encoded><![CDATA[<p>It&#8217;s time to update Dan Cederholm’s <a href="http://www.alistapart.com/articles/fauxcolumns/">faux columns</a> to take advantage of CSS3 gradients and reduce http requests.</p>
+<p>I&#8217;ve put a <a href="http://gh.peterwilson.cc/quick-demos/css3fauxcols.html">demo on Github</a> where you can also see the <a href="https://github.com/peterwilsoncc/quick-demos/blob/gh-pages/css3fauxcols.html">source code</a>.<span id="more-1302"></span></p>
+<h3>Two columns, both with solid colours</h3>
+<pre><code>background: #fff url(css3faux-i/cols.png);
+background-image: -o-linear-gradient(left, #fff 639px, #bed751 640px);
+background-image: -moz-linear-gradient(left, #fff 639px, #bed751 640px);
+background-image: -webkit-linear-gradient(left, #fff 639px, #bed751 640px);
+background-image: -ms-linear-gradient(left, #fff 639px, #bed751 640px);
+background-image: linear-gradient(left, #fff 639px, #bed751 640px);</code></pre>
+<h3>Two columns, with a one pixel divider</h3>
+<pre><code>background: #fff url(css3faux-i/div.png);
+background-image: -o-linear-gradient(left, #fff 639px, #bed751 640px, #fff 641px);
+background-image: -moz-linear-gradient(left, #fff 639px, #bed751 640px, #fff 641px);
+background-image: -webkit-linear-gradient(left, #fff 639px, #bed751 640px, #fff 641px);
+background-image: -ms-linear-gradient(left, #fff 639px, #bed751 640px, #fff 641px);
+background-image: linear-gradient(left, #fff 639px, #bed751 640px, #fff 641px);</code></pre>
+<h3>Two columns, one with a gradient</h3>
+<pre><code>background: #fff url(css3faux-i/gradient.png);
+background-image: -o-linear-gradient(left, #fff 639px, #bed751 640px, #efffa5 100%);
+background-image: -moz-linear-gradient(left, #fff 639px, #bed751 640px, #efffa5 100%);
+background-image: -webkit-linear-gradient(left, #fff 639px, #bed751 640px, #efffa5 100%);
+background-image: -ms-linear-gradient(left, #fff 639px, #bed751 640px, #efffa5 100%);
+background-image: linear-gradient(left, #fff 639px, #bed751 640px, #efffa5 100%);</code></pre>
+]]></content:encoded>
+			<wfw:commentRss>/2011/css3-faux-columns/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>How we do IE Hacks</title>
+		<link>/2011/iehacks/</link>
+		<comments>/2011/iehacks/#comments</comments>
+		<pubDate>Wed, 14 Sep 2011 01:30:50 +0000</pubDate>
+		<dc:creator><![CDATA[Peter Wilson]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+		<category><![CDATA[coding]]></category>
+		<category><![CDATA[CSS]]></category>
+		<category><![CDATA[ie6]]></category>
+		<category><![CDATA[ie7]]></category>
+		<category><![CDATA[internet explorer]]></category>
+
+		<guid isPermaLink="false">/?p=1256</guid>
+		<description><![CDATA[We've recently changed the way we do IE hacks at Soupgiant. For years we were using conditional comments to load separate CSS files.]]></description>
+				<content:encoded><![CDATA[<p>We recently changed the way we do <abbr title="Internet Explorer">IE</abbr> hacks at <a href="http://soupgiant.com">Soupgiant</a>. For years we used conditional comments to load separate CSS files.</p>
+<p>For a few sites, we used <a href="http://paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/">Paul Irish&#8217;s conditional HTML classes hacks</a>. Without workarounds, this puts <a href="https://github.com/paulirish/html5-boilerplate/issues/378"><abbr>IE</abbr> in compatibility mode</a>.</p>
+<p><span id="more-1256"></span></p>
+<p>Recently, we decided to go back to attribute hacks.</p>
+<p>Using <a href="http://lesscss.org">LESS CSS</a> and compiling with <a href="http://incident57.com/less/">less.app</a>, it&#8217;s possible to store the hacks in a single location and remove them once the browsers die.</p>
+<p>The hacks we use are:</p>
+<pre><code>/* <abbr>IE6</abbr> */ 
+#something {
+  _color: blue;
+}
+
+/* <abbr>IE6</abbr>, <abbr>IE7</abbr> */
+#something { 
+  *color: blue;
+}</code></pre>
+<p>Around the time we switched, Mathias Bynens wrote a post detailing <a href="http://mathiasbynens.be/notes/safe-css-hacks">much the same conclusions we reached</a>. I won&#8217;t rehash them here.</p>
+<p><em>Excuse the dull and highly unfashionable post. It&#8217;s main purpose is so we can go to <a href="/iehacks">bigredtin.com/iehacks</a> when memory fails us. We use this blog a resource.</em></p>
+]]></content:encoded>
+			<wfw:commentRss>/2011/iehacks/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Big Red Framework on WordPress.org</title>
+		<link>/2011/big-red-framework-on-wordpress-org/</link>
+		<comments>/2011/big-red-framework-on-wordpress-org/#comments</comments>
+		<pubDate>Thu, 25 Aug 2011 23:19:51 +0000</pubDate>
+		<dc:creator><![CDATA[Peter Wilson]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+		<category><![CDATA[themes]]></category>
+		<category><![CDATA[WordPress]]></category>
+
+		<guid isPermaLink="false">/?p=1248</guid>
+		<description><![CDATA[Big Red, the Soupgiant WordPress framework, has been added to the WordPress.org theme repository.]]></description>
+				<content:encoded><![CDATA[<p>Big Red, the <a href="http://soupgiant.com/">Soupgiant</a> WordPress framework, has been added to the <a href="http://wordpress.org/extend/themes/big-red-framework">WordPress.org theme repository</a>.</p>
+<p>If you have any code suggestions, you can <a href="https://github.com/soupgiant/big-red-framework">fork the theme on Github</a> and submit a pull request.</p>
+]]></content:encoded>
+			<wfw:commentRss>/2011/big-red-framework-on-wordpress-org/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>How Google Damages Its Own Brand</title>
+		<link>/2011/how-google-damages-its-own-brand/</link>
+		<comments>/2011/how-google-damages-its-own-brand/#comments</comments>
+		<pubDate>Wed, 10 Aug 2011 00:22:45 +0000</pubDate>
+		<dc:creator><![CDATA[Josh Kinal]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+		<category><![CDATA[brand]]></category>
+		<category><![CDATA[google]]></category>
+		<category><![CDATA[google plus]]></category>
+		<category><![CDATA[user experience]]></category>
+
+		<guid isPermaLink="false">/?p=1216</guid>
+		<description><![CDATA[Google Reader allows me to send to Twitter but not Google+. What is this doing to Google's own branding?]]></description>
+				<content:encoded><![CDATA[<p><img src="http://littlerunningbear.com/files/2011/08/Screen-shot-2011-08-10-at-10.05.03-AM.png" alt="Screen shot 2011 08 10 at 10 05 03 AM" border="0" width="447" height="60"/><br />
+In <a href="http://www.google.com/reader/" title="Feed reader for google">Google Reader</a> I can send a piece to <a href="http://twitter.com/">Twitter</a> but I can&#8217;t send it to <a href="http://plus.google.com" title="Google Plus">Google+</a>.</p>
+<p>It&#8217;s an issue across branding, functionality and user experience.</p>
+<p>Previously Google represented novelty, ease of use, simplicity and innovation. With every half-baked idea, lacking basic intra-operability and seemingly losing sight of their own suite of services, they damage the trust we invested in them.</p>
+<p>Maybe it&#8217;s only a little bit at a time, but it all adds up.</p>
+]]></content:encoded>
+			<wfw:commentRss>/2011/how-google-damages-its-own-brand/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Website Policies and SEO</title>
+		<link>/2011/website-policies-and-seo/</link>
+		<comments>/2011/website-policies-and-seo/#comments</comments>
+		<pubDate>Thu, 07 Jul 2011 02:11:10 +0000</pubDate>
+		<dc:creator><![CDATA[Josh Kinal]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+
+		<guid isPermaLink="false">/?p=1190</guid>
+		<description><![CDATA[Looking through the RACV website policies I noticed this item: 7. linking to this web site 7.1 If you wish to establish a link to this web site you must, in the first instance, use the Contact Us link at the top of the page and provide the following information: a) the URL of the [&#8230;]]]></description>
+				<content:encoded><![CDATA[<p>Looking through the RACV website policies I noticed this item:</p>
+<blockquote><p>7. linking to this web site</p>
+<p>7.1 If you wish to establish a link to this web site you must, in the first instance, use the Contact Us link at the top of the page and provide the following information:</p>
+<p>a) the URL of the web site that you seek to establish a link from;</p>
+<p>b) a brief description of your web site; and</p>
+<p>c) the reason that you wish to establish a link.</p>
+<p>7.2	If RACV agrees to your proposed link, you must comply with any terms and conditions imposed by RACV as a condition of such agreement.  If the nature and/or content of your web site changes in any significant way, you must contact RACV and provide a new description of your web site.</p>
+</blockquote>
+<p>Is this good SEO practice? Is it a reasonable web practice considering the need for links to create the web itself?</p>
+<p>Is there copyright on the URL? Who owns that copyright?</p>
+<p>In keeping with their policies, I have not linked to the appropriate page but you can find it by going to racv.com.au and clicking the link at the bottom of the page titled &#8220;RACV Website Terms &amp; Conditions of Use&#8221;.</p>
+]]></content:encoded>
+			<wfw:commentRss>/2011/website-policies-and-seo/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Putting the &#8220;distributed&#8221; in CDN</title>
+		<link>/2011/google-cdn-is-distributed/</link>
+		<comments>/2011/google-cdn-is-distributed/#comments</comments>
+		<pubDate>Wed, 08 Jun 2011 01:21:47 +0000</pubDate>
+		<dc:creator><![CDATA[Peter Wilson]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+		<category><![CDATA[caching]]></category>
+		<category><![CDATA[CDN]]></category>
+		<category><![CDATA[google]]></category>
+		<category><![CDATA[JavaScript]]></category>
+		<category><![CDATA[jQuery]]></category>
+		<category><![CDATA[Microsoft]]></category>
+
+		<guid isPermaLink="false">/?p=1133</guid>
+		<description><![CDATA[I wrote yesterday that Google appeared to have taken the distributed out of their public CDN hosting a variety of JavaScript libraries. I even provided some trace routes comparing their CDN to Microsoft's. I was wrong.]]></description>
+				<content:encoded><![CDATA[<p><a href="/2011/google-cdn-not-distributed/">I wrote yesterday</a> that Google appeared to have taken the &#8220;distributed&#8221; out of their public CDN hosting of a variety of JavaScript libraries. I even provided some trace routes comparing their CDN to Microsoft&#8217;s. I was wrong.</p>
+<p>Unlike <a href="https://twitter.com/om4james/">James Collins</a>, we don&#8217;t have terminal access to any servers in Australia. As <a href="/2010/why-we-host-on-american-servers/">I&#8217;ve detailed before</a>, our sites are hosted in the US. James was kind and diligent enough to do some further testing comparing Microsoft&#8217;s CDN to Google&#8217;s. He found they resolved as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Location</th>
+<th>Google</th>
+<th>Microsoft</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Melbourne, AU</th>
+<td>US</td>
+<td>Sydney</td>
+</tr>
+<tr>
+<th>Sydney, AU</th>
+<td>Sydney</td>
+<td>US</td>
+</tr>
+<tr>
+<th>Perth, AU</th>
+<td>Sydney</td>
+<td>US</td>
+</tr>
+</tbody>
+</table>
+<p>If you have the chance, I&#8217;d love you to test where <a href="http://ajax.aspnetcdn.com/">ajax.aspnetcdn.com</a> and <a href="http://ajax.googleapis.com/">ajax.googleapis.com</a> resolve to for you. You can do a <samp>traceroute</samp> and you should be able to work out the destination from host names and response times. Letting me know via twitter is probably easiest, my username is <a href="http://twitter.com/pwcc/">@pwcc</a>.</p>
+<p>Obviously, I should have done all this checking before writing the post. By failing to do so, I look a bit of a tit.</p>
+]]></content:encoded>
+			<wfw:commentRss>/2011/google-cdn-is-distributed/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Taking the &#8220;distributed&#8221; out of CDN</title>
+		<link>/2011/google-cdn-not-distributed/</link>
+		<comments>/2011/google-cdn-not-distributed/#comments</comments>
+		<pubDate>Tue, 07 Jun 2011 04:06:52 +0000</pubDate>
+		<dc:creator><![CDATA[Peter Wilson]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+		<category><![CDATA[caching]]></category>
+		<category><![CDATA[CDN]]></category>
+		<category><![CDATA[google]]></category>
+		<category><![CDATA[JavaScript]]></category>
+		<category><![CDATA[jQuery]]></category>
+		<category><![CDATA[Microsoft]]></category>
+
+		<guid isPermaLink="false">/?p=1125</guid>
+		<description><![CDATA[Over on Twitter @bobearth prompted me to do run some trace routes against the Google CDN and compare it to the Microsoft CDN. It appears Google have taken the distributed network out of their CDN.]]></description>
+				<content:encoded><![CDATA[<p><strong>Note: After publishing this article, I was given the results of traceroutes from other Australian cities. <a title="Putting the “distributed” in CDN" href="/2011/google-cdn-is-distributed/">The results showed I was wrong</a>.</strong></p>
+<p>Over on Twitter <a href="https://twitter.com/bobearth/statuses/77929850245095426">@bobearth</a>, prompted me to run some trace routes against the Google <abbr>CDN</abbr> and compare it to the Microsoft <abbr>CDN</abbr>. It appears Google have taken the distributed network out of their <abbr>CDN</abbr>.</p>
+<p>As you&#8217;re probably aware, <abbr>CDN</abbr> is an abbreviation for content distributed network. The idea behind them is that American users will be served content from a server located in the <abbr>US</abbr> or Canada, Australian users will be served content from a server located in Australia or the Pacific, and so on.</p>
+<p><span id="more-1125"></span></p>
+<p>Doing a trace to the Google <abbr>CDN</abbr> from the <a href="http://soupgiant.com">Soupgiant</a> <abbr>HQ</abbr> in <a href="http://maps.google.com.au/maps?q=soupgiant&amp;um=1&amp;ie=UTF-8&amp;sa=N&amp;hl=en&amp;tab=wl">Melbourne</a>, I was expecting to receive a response a server in Sydney. Instead, the response came from California, <abbr>USA</abbr> as the final steps of this <code>traceroute</code> show:</p>
+<pre><samp>127.0.0.1:~ peterwilson$ traceroute ajax.googleapis.com
+[snip]
+ 5  syd-nxg-men-crt1-ge-3-1-0 (202.7.173.241)  27.479 ms  87.472 ms  78.234 ms
+ 6  202.7.171.46 (202.7.171.46)  91.118 ms  31.786 ms  27.314 ms
+ 7  66.249.95.232 (66.249.95.232)  80.358 ms
+    66.249.95.234 (66.249.95.234)  27.842 ms
+    66.249.95.232 (66.249.95.232)  44.059 ms
+ 8  209.85.249.52 (209.85.249.52)  177.570 ms
+    66.249.95.166 (66.249.95.166)  172.656 ms  157.311 ms
+ 9  72.14.236.126 (72.14.236.126)  172.117 ms  153.304 ms  180.227 ms
+10  googleapis.l.google.com (66.249.89.95)  178.725 ms  193.939 ms  181.227 ms</samp></pre>
+<p>The response from Microsoft&#8217;s CDN were more to my liking:</p>
+<pre><samp>127-0-0-1:~ peterwilson$ traceroute ajax.aspnetcdn.com
+traceroute: Warning: ajax.aspnetcdn.com has multiple addresses; using 70.37.159.166
+traceroute to ajax.aspnetcdn.com (70.37.159.166), 64 hops max, 52 byte packets
+[snip]
+ 7  10gigabitethernet5-1.syd-xmx-edgcom-1b.ntwk.msn.net (70.37.149.62)  90.691 ms  86.004 ms  37.900 ms
+ 8  ajax.microsoft.com (70.37.159.166)  71.541 ms  83.053 ms  80.586 ms</samp></pre>
+<p>This prompts the question: should I switch to serving jQuery and other hosted libraries to the Microsoft <abbr>CDN</abbr>? Both Google and Microsoft use a cookie-free domain for their <abbr>CDN</abbr>s, both are set to browser cache for 12 months. More sites use Google&#8217;s <abbr>CDN</abbr> to serve, but only Microsoft serve geographically near the majority of visitors to Soupgiant and Big Red Tin.</p>
+<p>&nbsp;</p>
+<p>I don&#8217;t know the answer to this question. I do know that if Google&#8217;s <abbr>CDN</abbr> was distributed, there would be no question.</p>
+]]></content:encoded>
+			<wfw:commentRss>/2011/google-cdn-not-distributed/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Big Red Framework</title>
+		<link>/2011/big-red-framework/</link>
+		<comments>/2011/big-red-framework/#comments</comments>
+		<pubDate>Thu, 28 Apr 2011 01:53:19 +0000</pubDate>
+		<dc:creator><![CDATA[Peter Wilson]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+		<category><![CDATA[coding]]></category>
+		<category><![CDATA[theme]]></category>
+		<category><![CDATA[themes]]></category>
+		<category><![CDATA[WordPress]]></category>
+
+		<guid isPermaLink="false">/?p=1080</guid>
+		<description><![CDATA[We&#8217;ve updated the base WordPress theme we use at Soupgiant for WordPress 3.1+ and to make more use of the WordPress API. Along with the standard features you would expect in a WordPress framework, it includes templates for the Theme My Login plugin, custom default code for Formidable / Formidable Pro plugins, custom html output [&#8230;]]]></description>
+				<content:encoded><![CDATA[<p>We&#8217;ve updated the base WordPress theme we use at <a title="Soupgiant" href="http://soupgiant.com">Soupgiant</a> for WordPress 3.1+ and to make more use of the WordPress API.</p>
+<p>Along with the standard features you would expect in a WordPress framework, it includes</p>
+<ul>
+<li>templates for the <a title="Theme My Login" href="http://wordpress.org/extend/plugins/theme-my-login/">Theme My Login</a> plugin,</li>
+<li>custom default code for <a title="Formidable" href="http://wordpress.org/extend/plugins/formidable/">Formidable</a> / <a title="Formidable Pro" href="http://formidablepro.com/">Formidable Pro</a> plugins,</li>
+<li>custom html output for the <a title="Grunion Contact Form plugin" href="http://wordpress.org/extend/plugins/grunion-contact-form/">Grunion Contact Form plugin</a>, and,</li>
+<li>a child theme <a href="https://github.com/soupgiant/big-red-framework/tree/master/assets/_starter">starter</a>.</li>
+</ul>
+<p>Never use the framework proper to set up a theme, set up a child theme instead.</p>
+<ul>
+<li>Copy the files from the starter directory into the base folder of your child theme</li>
+<li>Create the sub-directory assets in your child theme</li>
+<li>Copy the framework&#8217;s assets/child/ directory into the assets directory of your child theme</li>
+</ul>
+<p>See the WordPress codex page on <a title="child themes" href="http://codex.wordpress.org/Child_Themes">child themes</a> for more information.</p>
+<p><strong>More documentation to come!</strong></p>
+]]></content:encoded>
+			<wfw:commentRss>/2011/big-red-framework/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Guest Post on Digging into WordPress</title>
+		<link>/2011/guest-post-on-digwp/</link>
+		<comments>/2011/guest-post-on-digwp/#comments</comments>
+		<pubDate>Thu, 10 Feb 2011 23:34:56 +0000</pubDate>
+		<dc:creator><![CDATA[Peter Wilson]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+
+		<guid isPermaLink="false">/?p=1053</guid>
+		<description><![CDATA[Jeff and Chris have been kind enough to publish <a href="http://digwp.com/2011/02/hosting-clients-wordpress-network/">Hosting Client Sites on a WordPress Network</a> as a guest post on Digging into WordPress.]]></description>
+				<content:encoded><![CDATA[<p>Jeff and Chris have been kind enough to publish <a href="http://digwp.com/2011/02/hosting-clients-wordpress-network/">Hosting Client Sites on a WordPress Network</a> as a guest post on Digging into WordPress.</p>
+<blockquote><p>Regular updates keep WordPress secure and expand the feature set, ensuring the platform meets both the developer’s and their client’s needs.</p>
+<p>The flipside of regular updates is the maintenance of WordPress installs. Once you start maintaining more than a few installs for your clients, keeping both plugins and WordPress up to date can become a bit repetitive.</p>
+<p>Setting up a WordPress Network, using the multisite feature, reduces maintenance time. Upgrading all your sites becomes almost as easy as upgrading it for one.</p></blockquote>
+<p>Head over to Digging into WordPress to <a href="http://digwp.com/2011/02/hosting-clients-wordpress-network/">read the post</a> and leave a comment.</p>
+]]></content:encoded>
+			<wfw:commentRss>/2011/guest-post-on-digwp/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Caching Google&#8217;s WebFont Loader</title>
+		<link>/2010/caching-google-webfont-loader/</link>
+		<comments>/2010/caching-google-webfont-loader/#comments</comments>
+		<pubDate>Wed, 15 Dec 2010 00:39:07 +0000</pubDate>
+		<dc:creator><![CDATA[Peter Wilson]]></dc:creator>
+				<category><![CDATA[Quick Notes]]></category>
+		<category><![CDATA[@font-face]]></category>
+		<category><![CDATA[caching]]></category>
+		<category><![CDATA[fonts]]></category>
+		<category><![CDATA[google]]></category>
+		<category><![CDATA[JavaScript]]></category>
+		<category><![CDATA[WebFont loader]]></category>
+
+		<guid isPermaLink="false">/?p=988</guid>
+		<description><![CDATA[As with Google's other hosted libraries, providing a more specific version number of webfont.js will effect browser caching.]]></description>
+				<content:encoded><![CDATA[<p>The <a title="Google WebFont Loader" href="http://code.google.com/apis/webfonts/docs/webfont_loader.html">Google WebFont Loader</a> provides the following sample code:</p>
+<pre><code>WebFontConfig = {
+  google: { families: [ 'Tangerine', 'Cantarell' ] }
+};
+(function() {
+  var wf = document.createElement('script');
+  wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+<strong>      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+</strong>  wf.type = 'text/javascript';
+  wf.async = 'true';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(wf, s);
+})();</code></pre>
+<p>The line in bold indicates version one of webfont.js is being loaded. As with Google&#8217;s other hosted libraries providing a more, or less, specific version number will effect both browser <a href="/behind-the-websites/caching-on-the-google-ajax-libraries-api/">caching and whether the webfont.js is upgraded automatically</a>.</p>
+<table>
+<thead>
+<tr>
+<th scope="col">Version in code</th>
+<th scope="col">Version provided</th>
+<th scope="col">Caching period</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Latest in Version 1 tree (currently 1.0.17)</td>
+<td>1 hour</td>
+</tr>
+<tr>
+<td>1.0</td>
+<td>Latest in Version 1.0 tree (currently 1.0.17)</td>
+<td>1 hour</td>
+</tr>
+<tr>
+<td>1.0.17</td>
+<td>Version 1.0.17</td>
+<td>1 year</td>
+</tr>
+</tbody>
+</table>
+<p>By using the exact version number in your code, the load time of your site will improve on return visits as webfont.js will already be cached in your visitors browser. It will be cached on your visitors first visit if they&#8217;ve visited another site using the exact version in the last twelve months.</p>
+<p>You can see the latest version available by visiting the <a href="http://code.google.com/apis/libraries/devguide.html#webfont">Google Libraries Developer Guide</a>. You can specify the exact version number in your code by replacing the bold line in the code sample above with:</p>
+<pre><code><strong>'://ajax.googleapis.com/ajax/libs/webfont/1.0.17/webfont.js';</strong></code></pre>
+]]></content:encoded>
+			<wfw:commentRss>/2010/caching-google-webfont-loader/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+	</channel>
+</rss>

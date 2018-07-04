@@ -1,0 +1,29 @@
+@media screen {
+	/*! This file has *//* NOT *//*! been minimized. */
+
+
+	/*In minimized files, *//*! credits of reused code can be found by removing '-min' from the url. */
+
+	.aktt_widget .aktt_tweets li {
+		zoom: 1;
+	}
+
+
+	.widget_search .inputText {
+		width: 125px;
+	}
+	.widget_search input.searchSubmit {
+		color: #007439;
+		background: #fff;
+		padding: 2px;
+		margin-bottom: 0;
+		text-transform: uppercase;
+		border: 2px solid #007439;
+		cursor: pointer;
+	}
+
+	.soupgiant .widget_search input.searchSubmit {
+		color: #26ace1;
+		border-color: #26ace1;
+	}
+}

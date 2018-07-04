@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?> <rss
+version="2.0"
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+><channel><title>Big Red Tin &#187; wp_localize_script</title> <atom:link href="/tag/wp_localize_script/feed/" rel="self" type="application/rss+xml" /><link>http://bigredtin.com</link> <description>Thoughts about the web and business from the large pantry</description> <lastBuildDate>Thu, 30 Dec 2010 14:33:55 +0000</lastBuildDate> <language>en</language> <sy:updatePeriod>hourly</sy:updatePeriod> <sy:updateFrequency>1</sy:updateFrequency> <item><title>JavaScript Localisation in WordPress</title><link>/behind-the-websites/javascript-localisation-in-wordpress/</link> <comments>/behind-the-websites/javascript-localisation-in-wordpress/#comments</comments> <pubDate>Wed, 01 Sep 2010 20:00:45 +0000</pubDate> <dc:creator>Peter Wilson</dc:creator> <category><![CDATA[Behind the Websites]]></category> <category><![CDATA[coding]]></category> <category><![CDATA[JavaScript]]></category> <category><![CDATA[themes]]></category> <category><![CDATA[WordPress]]></category> <category><![CDATA[wp_enqueue_script]]></category> <category><![CDATA[wp_localize_script]]></category><guid
+isPermaLink="false">http://bigredtin.pressgiant.net/?p=759</guid> <description><![CDATA[I was asked on Twitter recently if it's possible to pass WordPress data to JavaScript, <code>wp_localize_script()</code> is the tool to do it with.]]></description> <content:encoded><![CDATA[<p>Recently on Twitter <a
+title="@iamcracks" href="http://twitter.com/iamcracks/">@iamcracks</a> asked</p><blockquote><p>Attention WordPress Wizards &amp; Gurus. Is it possible to &#8220;get WordPress to write a custom field into a javascript variable&#8221;?</p><p>&#8211; <a
+title="source" href="http://twitter.com/iamcracks/status/22658211370">source</a></p></blockquote><p>While I wouldn&#8217;t be so bold as to claim I&#8217;m either a wizard or a guru, I happen to know the answer to @iamcracks question.</p><p>A while back I wrote a two part tutorial on using <a
+title="JavaScript the WordPress way" href="/behind-the-websites/javascript-the-wordpress-way-part-1/">JavaScript the WordPress way</a>, the code below builds on that. The first step is to load the JavaScript in functions.php using <code>wp_enqueue_script()</code> as detailed in the earlier tutorial:</p><pre><code>&lt;?php
+function brt_load_scripts() {
+  if (!is_admin()) {
+    wp_enqueue_script(
+      'brt-sample-script', //handle
+      '/path/2/script.js', //source
+      null, //no dependancies
+      '1.0.1', //version
+      true //load in html footer
+    );
+  }
+}
+
+add_action('wp_print_scripts', 'brt_load_scripts');
+?&gt;</code></pre><p>This outputs the html required for the JavaScript when <code>wp_footer()</code> is called in footer.php</p><p>Localising the script is done using the function <code>wp_localize_script()</code> it takes three variables:</p><ul><li><strong>$handle</strong> &#8211; (string) the handle defined when registering the script with wp_enqueue_script</li><li><strong>$javascriptObject</strong> &#8211; (string) name of the JavaScript object that contains the passed variables.</li><li><strong>$variables</strong> &#8211; (array) the variables to be passed</li></ul><p>To pass the site&#8217;s home page and the theme directory, we&#8217;d add this function call below the <code>wp_enqueue_script</code> call above:</p><pre><code>&lt;?php
+...
+wp_localize_script('brt-sample-script', 'brtSampleVars', array(
+  'url' =&gt; get_bloginfo('url'),
+  'theme_dir' =&gt; get_bloginfo('stylesheet_directory')
+  )
+);
+...
+?&gt;</code></pre><p>The output html would be:</p><pre><code>&lt;script type='text/javascript'&gt;
+/* &lt;![CDATA[ */
+var brtSampleVars = {
+  url: "http://bigredtin.com",
+  theme_dir: "/wp-content/themes/bigredtin"
+};
+/* ]]&gt; */
+&lt;/script&gt;
+&lt;script type='text/javascript' src='/path/2/script.js?ver=1.0.1'&gt;&lt;/script&gt;</code></pre><p>Accessing the variables within JavaScript is done using the standard dot notation, for example <code>brtSampleVars.theme_dir</code> to access the theme directory.</p><p>Using a post&#8217;s custom fields is slightly more complicated so I&#8217;ll write out the code in full:</p><pre><code>&lt;?php
+function brt_load_scripts() {
+  if (is_singular()) {
+    wp_enqueue_script(
+      'brt-sample-script', //handle
+      '/path/2/script.js', //source
+      null, //no dependancies
+      '1.0.1', //version
+      true //load in html footer
+    );
+
+    the_post();
+    $allPostMeta = get_post_custom();
+    wp_localize_script('brt-sample-script', 'brtSampleVars',
+    array(
+      'petersTwitter' =&gt; $allPostMeta['myTwitter'][0],
+      'joshsTwitter' =&gt; $allPostMeta['joshsTwitter'][0]
+      )
+    );
+    rewind_posts();
+  }
+}
+
+add_action('wp_print_scripts', 'brt_load_scripts');
+?&gt;</code></pre><p>Only pages and posts have custom fields so the check at the start of the function has become <code>is_singlular()</code> to check the user is on either a post or a page, earlier we were testing if the user was anywhere on the front end. The arguments for <code>wp_enqueue_script</code> have not changed.</p><p><code>the_post()</code> needs to be called to start the loop and initiate the $post object so the associated custom fields can be accessed in the following line and put in an array.</p><p>With the custom fields easily available, the information can then be passed to <code>wp_localize_script()</code> as earlier demonstrated. The final step is to rewind the loop so next time <code>the_post()</code> is called, from either single.php or page.php, the post data is available.</p><p>The html output from the sample above would be:</p><pre><code>&lt;script type='text/javascript'&gt;
+/* &lt;![CDATA[ */
+var brtSampleVars = {
+  petersTwitter: "@pwcc",
+  joshsTwitter: "@sealfur"
+};
+/* ]]&gt; */
+&lt;/script&gt;
+&lt;script type='text/javascript' src='/path/2/script.js?ver=1.0.1'&gt;&lt;/script&gt;</code></pre>]]></content:encoded> <wfw:commentRss>/behind-the-websites/javascript-localisation-in-wordpress/feed/</wfw:commentRss> <slash:comments>2</slash:comments> </item> </channel> </rss>
+<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
+
+Minified using disk
+Page Caching using disk (enhanced)
+Database Caching 22/26 queries in 0.004 seconds using apc
+Content Delivery Network via sg.assets.sgiant.com/pressgiant
+
+Served from: bigredtin.com @ 2011-01-01 17:48:18 -->
